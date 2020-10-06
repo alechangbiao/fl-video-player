@@ -19,7 +19,7 @@ class AppLocalizations {
     });
   }
 
-  /********** Messages **********/
+  /// ******** Messages **********/
   String get app_name => Intl.message('V2 Player', name: 'app_name', desc: 'The name of the app');
 }
 

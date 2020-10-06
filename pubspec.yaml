@@ -27,6 +27,7 @@ dependencies:
   provider:
   flutter_localizations:
     sdk: flutter
+  shared_preferences:
 
 dev_dependencies:
   intl_translation:

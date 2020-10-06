@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:app/localization/localization.dart';
 
 class Resources extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  Resources({this.navigatorKey});
-
   @override
   Widget build(BuildContext context) {
     print('Building Resources Root Page...');

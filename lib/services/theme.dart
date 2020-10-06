@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
-class AppThemeProvider with ChangeNotifier {
+class AppTheme with ChangeNotifier {
   ThemeData _theme;
 
-  AppThemeProvider(this._theme);
+  static ThemeData light() {
+    return ThemeData.light().copyWith(primaryColor: Colors.teal);
+  }
+
+  static ThemeData dark() {
+    return ThemeData.dark().copyWith(accentColor: Colors.orange, toggleableActiveColor: Colors.blue);
+  }
+
+  AppTheme(this._theme);
 
   ThemeData get theme => _theme;
 

@@ -7,7 +7,7 @@ class Appearances extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Building Appearances Page...');
 
-    AppThemeProvider _theme = Provider.of<AppThemeProvider>(context);
+    AppTheme _theme = Provider.of<AppTheme>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -18,13 +18,21 @@ class Appearances extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FlatButton(
-              onPressed: () => _theme.setTheme(ThemeData.dark()),
-              child: Text('DARK THEME'),
+              onPressed: () => _theme.setTheme(ThemeData.light()),
+              child: Text('DEFAULT LIGHT THEME'),
             ),
             FlatButton(
-              onPressed: () => _theme.setTheme(ThemeData.light()),
-              child: Text('LIGHT THEME'),
+              onPressed: () => _theme.setTheme(AppTheme.light()),
+              child: Text('CUSTOM LIGHT THEME'),
             ),
+            FlatButton(
+              onPressed: () => _theme.setTheme(ThemeData.dark()),
+              child: Text('DEFAULT DARK THEME'),
+            ),
+            FlatButton(
+              onPressed: () => _theme.setTheme(AppTheme.dark()),
+              child: Text('CUSTOM DARK THEME'),
+            )
           ],
         ),
       ),

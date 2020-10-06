@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class NavigationProvider with ChangeNotifier {
-  final _videosNavigatorKey = GlobalKey<NavigatorState>();
-  final _resourcesNavigatorKey = GlobalKey<NavigatorState>();
-  final _settringsNavigatorKey = GlobalKey<NavigatorState>();
+class AppNavigation with ChangeNotifier {
+  static final videosNavigatorKey = GlobalKey<NavigatorState>();
+  static final resourcesNavigatorKey = GlobalKey<NavigatorState>();
+  static final settingsNavigatorKey = GlobalKey<NavigatorState>();
 
   int _currentTabIndex = 0;
 
   List<GlobalKey<NavigatorState>> _navigatorKeys;
 
-  NavigationProvider() {
-    _navigatorKeys = [_videosNavigatorKey, _resourcesNavigatorKey, _settringsNavigatorKey];
+  AppNavigation() {
+    _navigatorKeys = [videosNavigatorKey, resourcesNavigatorKey, settingsNavigatorKey];
   }
 
   int get currentTabIndex => _currentTabIndex;
@@ -23,7 +23,7 @@ class NavigationProvider with ChangeNotifier {
     if (_currentTabIndex != newIndex) {
       _currentTabIndex = newIndex;
     } else {
-      // If the user is re-selecting the tab, the common behavior is to empty the stack.
+      // If re-selecting the tab, common behavior is to empty the stack.
       _navigatorKeys[_currentTabIndex].currentState.popUntil((route) => route.isFirst);
     }
     notifyListeners();

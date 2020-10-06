@@ -2,52 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:app/localization/localization.dart';
 import 'package:app/pages/appearances.dart';
 import 'package:app/pages/storage.dart';
+import 'package:app/services/navigation.dart';
 
 class Settings extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  Settings({this.navigatorKey});
-
   @override
   Widget build(BuildContext context) {
     print('Building Settings Root Page...');
 
     return Navigator(
-      key: navigatorKey,
+      key: AppNavigation.settingsNavigatorKey,
       onGenerateRoute: (settings) => MaterialPageRoute(
         settings: settings,
         builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Settings'),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).app_name,
-                    style: TextStyle(
-                      fontSize: Theme.of(context).textTheme.headline4.fontSize,
-                      color: Colors.green,
-                    ),
-                  ),
-                  RaisedButton(
-                    onPressed: () {
-                      navigatorKey.currentState.push(MaterialPageRoute(builder: (context) => Appearances()));
-                    },
-                    child: Text('Appearances'),
-                  ),
-                  RaisedButton(
-                    onPressed: () {
-                      navigatorKey.currentState.push(MaterialPageRoute(builder: (context) => Storage()));
-                    },
-                    child: Text('Storage'),
-                  )
-                ],
-              ),
-            ),
-          );
+          return _Settings();
         },
       ),
     );
@@ -55,42 +22,52 @@ class Settings extends StatelessWidget {
 }
 
 class _Settings extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  _Settings({this.navigatorKey});
-
+  _Settings();
   @override
   Widget build(BuildContext context) {
-    print('Building Settings Root Page...');
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context).app_name,
-              style: TextStyle(
-                fontSize: Theme.of(context).textTheme.headline4.fontSize,
-                color: Colors.green,
-              ),
+      body: ListView(
+        children: <Widget>[
+          Text(
+            AppLocalizations.of(context).app_name,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.headline4.fontSize,
             ),
-            RaisedButton(
-              onPressed: () {
-                // Navigator.of(context, rootNavigator: false).pushNamed('/Appearances');
-                navigatorKey.currentState.push(MaterialPageRoute(builder: (context) => Appearances()));
+          ),
+          RaisedButton(
+            onPressed: () {
+              AppNavigation.settingsNavigatorKey.currentState
+                  .push(MaterialPageRoute(builder: (context) => Appearances()));
+            },
+            child: Text('Appearances'),
+          ),
+          RaisedButton(
+            onPressed: () {
+              AppNavigation.settingsNavigatorKey.currentState.push(MaterialPageRoute(builder: (context) => Storage()));
+            },
+            child: Text('Storage'),
+          ),
+          SwitchListTile(
+            value: true,
+            title: Text("This is a SwitchPreference"),
+            onChanged: (value) {},
+          ),
+          ListTile(
+            title: Text('Enable Feature'),
+            trailing: Checkbox(
+              value: true,
+              onChanged: (val) {
+                print('onChanged');
               },
-              child: Text('Appearances'),
             ),
-            RaisedButton(
-              onPressed: () => Navigator.of(context, rootNavigator: false).pushNamed('/Storage'),
-              child: Text('Storage'),
-            )
-          ],
-        ),
+            onTap: () {
+              print('onTap');
+            },
+          ),
+        ],
       ),
     );
   }

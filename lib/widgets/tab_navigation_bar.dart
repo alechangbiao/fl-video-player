@@ -5,7 +5,7 @@ import 'package:app/services/navigation.dart';
 class TabNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    NavigationProvider _nav = Provider.of<NavigationProvider>(context);
+    AppNavigation _nav = Provider.of<AppNavigation>(context);
 
     return BottomNavigationBar(
       currentIndex: _nav.currentTabIndex,

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:app/localization/localization.dart';
 import 'package:app/pages/player.dart';
+import 'package:app/services/navigation.dart';
 
 class Videos extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-
-  Videos({this.navigatorKey});
-
   @override
   Widget build(BuildContext context) {
     print('Building Video Page Stacks...');
 
     return Navigator(
+      key: AppNavigation.resourcesNavigatorKey,
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
           settings: settings,
@@ -21,6 +19,8 @@ class Videos extends StatelessWidget {
                 return _Videos();
               case '/player':
                 return Player();
+              default:
+                return Container();
             }
           },
         );
@@ -47,7 +47,7 @@ class _Videos extends StatelessWidget {
                 color: Colors.blue,
               ),
             ),
-            FlatButton(
+            RaisedButton(
               onPressed: () => Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
                   builder: (context) => Player(),
