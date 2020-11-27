@@ -1,10 +1,15 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:app/localization/locales/messages_all.dart';
+import 'package:app/localization/messages.dart' as msgs;
 
 class AppLocalizations {
-  static AppLocalizations of(BuildContext context) => Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
 
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
@@ -19,8 +24,11 @@ class AppLocalizations {
     });
   }
 
-  /// ******** Messages **********/
-  String get app_name => Intl.message('V2 Player', name: 'app_name', desc: 'The name of the app');
+  //------------------------- Messages -------------------------
+
+  String get app_name => msgs.app_name;
+
+  //------------------------- Messages End -------------------------
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

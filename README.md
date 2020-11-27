@@ -1,6 +1,6 @@
 # V2 Player Flutter App
 
-Xcode version: 11.5
+<br />
 
 ## Localization
 
@@ -19,20 +19,56 @@ dev_dependencies:
   ...
 ```
 
+<br />
+
 ### Usage
 
-Generate .arb files from AppLocalization class:
+**STEP 1** - Generate .arb files from AppLocalization class:
 
 ```
 flutter pub pub run intl_translation:extract_to_arb --output-dir=lib/localization/locales lib/localization/localization.dart
 ```
 
-Generate Message classes from .arb files:
+<br />
+
+**STEP 2** - Generate Message classes from .arb files:
 
 ```
 flutter pub pub run intl_translation:generate_from_arb --output-dir=lib/localization/locales --no-use-deferred-loading lib/localization/localization.dart lib/localization/locales/intl_*.arb
 ```
 
+<br />
+
+### _Notice_
+
+DO NOT edit files in `lib/localization/locales`
+
+<br /><br />
+
+## Enable File Sharing for iOS
+
+cd into `ios/Runner/Info.plist` and add:
+
+```
+<key>UIFileSharingEnabled</key>
+<true/>
+```
+
+<br /><br />
+
 ## Issues & Solutions
 
+- Lorem issues
+- ...
+- ...
+- Ipsum Solutions
+
+<br /><br />
+
 ## Todos
+
+- Add Lisence file
+- **Air Drop** file from Mac to iPhone/iPad
+- **Air Drop** file from iPhone/iPad to Mac
+- Share file from app to other app
+- iPad layout optimization

@@ -1,22 +1,35 @@
+import 'package:flutter/material.dart';
 import 'package:app/services/utils.dart';
 
-class AppPreferences {
-  // static final AppPreferences _singleton = AppPreferences._internal();
-  // factory AppPreferences() => _singleton;
-  // AppPreferences._internal();
+class AppPreferences with ChangeNotifier {
+  static final AppPreferences _singleton = AppPreferences._internal();
 
-  static final String isDarkTheme = "isDarkTheme";
-  static final String isFollowSystemPreference = "isFollowSystemPreference";
+  AppPreferences._internal() {
+    print('AppPreferences: singleton instantiated.');
+  }
 
-  static Map<String, bool> theme = {
-    isDarkTheme: true,
-    isFollowSystemPreference: true,
-  };
+  factory AppPreferences() => _singleton;
+
+  static final String keyIsDarkTheme = "isDarkTheme";
+
+  bool _isDarkTheme;
+
+  bool get isDarkTheme => this._isDarkTheme;
+
+  set isDarkTheme(bool value) {
+    this._isDarkTheme = value;
+    notifyListeners();
+  }
+
+  Future<void> setIsDarkTheme(bool value) async {
+    await saveSharedPrefsAsync(key: keyIsDarkTheme, value: value);
+    isDarkTheme = value;
+  }
 
   Future<dynamic> loadAllPreferences() async {
-    print(theme);
-    theme[isDarkTheme] = await readSharedPrefAsync(key: isDarkTheme) ?? theme[isDarkTheme];
-    theme[isFollowSystemPreference] =
-        await readSharedPrefAsync(key: isFollowSystemPreference) ?? theme[isFollowSystemPreference];
+    // isDarkTheme = await readSharedPrefAsync(key: keyIsDarkTheme) ?? false;
+    dynamic sharedPref = await readSharedPrefAsync(key: keyIsDarkTheme);
+    // print('shared pref isDarkTheme: $sharedPref');
+    isDarkTheme = sharedPref ?? false;
   }
 }
