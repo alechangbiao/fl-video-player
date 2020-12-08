@@ -68,7 +68,12 @@ cd into `ios/Runner/Info.plist` and add:
 ## Todos
 
 - Add Lisence file
+- Multi-select & bulk action feature
+  - Multi delete or move
+  - High light folder section (dim light rest)
+  - Shake folders (optional)
+- Folder icon long press to show dropdown menu
 - **Air Drop** file from Mac to iPhone/iPad
 - **Air Drop** file from iPhone/iPad to Mac
 - Share file from app to other app
-- iPad layout optimization
+- iPad layout optimization **(important)**

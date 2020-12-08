@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/theme.dart';
 import 'package:app/services/navigation_service.dart';
 import 'package:app/services/video_player_service.dart';
-import 'package:app/services/file_service.dart';
 import 'package:app/data/preferences.dart';
 
 class AppProviders extends StatelessWidget {

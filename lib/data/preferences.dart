@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/services/utils.dart';
+import 'package:app/utils/shared_pref_utils.dart';
 
 class AppPreferences with ChangeNotifier {
   static final AppPreferences _singleton = AppPreferences._internal();

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:app/localization/localization.dart';
 import 'package:app/services/file_service.dart';
 import 'package:app/services/navigation_service.dart';
+import 'package:app/extensions/file_extension.dart';
 
-class ResourcesStack extends StatelessWidget {
+class FoldersStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('Building Resources Stack...');
@@ -21,7 +22,7 @@ class ResourcesStack extends StatelessWidget {
   Widget _renderStack(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Resources'),
+        title: Text('Folders'),
       ),
       body: Center(
         child: Column(
@@ -39,8 +40,32 @@ class ResourcesStack extends StatelessWidget {
               child: Text('check local path'),
             ),
             RaisedButton(
-              onPressed: () => FileService().listOfFiles,
+              onPressed: () => FileService().listFiles,
               child: Text('get a list of files'),
+            ),
+            RaisedButton(
+              onPressed: () => FileService().listDirectories,
+              child: Text('get a list of directories'),
+            ),
+            RaisedButton(
+              onPressed: () => FileService().getLocalInfo(),
+              child: Text('check .local file'),
+            ),
+            RaisedButton(
+              onPressed: () => FileService().isDotLocalExists(),
+              child: Text('check .local existance'),
+            ),
+            RaisedButton(
+              onPressed: () => FileService().createDotLocalFile(null),
+              child: Text('create .local file'),
+            ),
+            RaisedButton(
+              onPressed: () => '${FileService.getPathSync}/test_new_dir'.isDirectory,
+              child: Text('check is directory'),
+            ),
+            RaisedButton(
+              onPressed: () => '${FileService.getPathSync}/test_new_dir'.isFile,
+              child: Text('check is file'),
             ),
           ],
         ),

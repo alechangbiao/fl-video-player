@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/navigation_service.dart';
 import 'package:app/screens/videos/videos_stack.dart';
-import 'package:app/screens/resources/resources_stack.dart';
+import 'package:app/screens/folders/folders_stack.dart';
 import 'package:app/screens/settings/settings_stack.dart';
 import 'package:app/widgets/tab_navigation_bar.dart';
 
 class Root extends StatelessWidget {
   final List<Widget> _stacks = [
     VideosStack(),
-    ResourcesStack(),
+    FoldersStack(),
     SettingsStack(),
   ];
 

@@ -18,8 +18,8 @@ class TabNavigationBar extends StatelessWidget {
           label: 'videos',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.pie_chart),
-          label: 'resources',
+          icon: Icon(Icons.folder),
+          label: 'folders',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
