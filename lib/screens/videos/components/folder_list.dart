@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:app/services/navigation_service.dart';
-import 'package:app/screens/folder/folder_screen.dart';
+import 'package:random_string/random_string.dart';
+import 'package:provider/provider.dart';
+import 'package:app/services/file_service.dart';
+import 'package:app/screens/videos/components/folder_list_item.dart';
 
 class FolderList extends StatelessWidget {
   const FolderList({
@@ -9,53 +13,64 @@ class FolderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 80,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+    FileService _fsProvider = Provider.of<FileService>(context);
+
+    // List<FolderInfo> _subFolderInfos = [];
+
+    Widget addFolder() {
+      return FolderListItem(
+        name: 'Add Folder',
+        icon: Icons.add,
+        key: null,
+        onTap: () async {
+          await _fsProvider.createDirectory(name: null);
+          _fsProvider.updateRootPathFoldersList();
+        },
+      );
+    }
+
+    Widget buildInitialView(BuildContext context) {
+      return SizedBox(
+        height: 80,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: InkWell(
-                onTap: () {
-                  NavigationService.currentStackState.push(
-                    MaterialPageRoute(
-                      builder: (context) => FolderScreen(),
-                    ),
-                  );
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Icon(Icons.folder, size: 80, color: Colors.amber.withOpacity(0.8)),
-                    Icon(Icons.lock, size: 24, color: Colors.white70)
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.folder, size: 80, color: Colors.amber.withOpacity(0.8)),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.folder, size: 80, color: Colors.amber.withOpacity(0.8)),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Icon(Icons.folder, size: 80, color: Colors.amber.withOpacity(0.8)),
-                  Icon(Icons.add, size: 24, color: Colors.white70)
-                ],
-              ),
-            ),
+            FolderListItem(name: 'Private', icon: Icons.lock),
+            addFolder(),
           ],
         ),
-      ),
-    );
+      );
+    }
+
+    Widget buildView(BuildContext context) {
+      return SizedBox(
+        height: 80,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            FolderListItem(
+              name: 'Private',
+              icon: Icons.lock,
+              key: Key(randomAlpha(5)),
+            ),
+            for (Directory dir in _fsProvider.rootPathFolders)
+              FolderListItem(
+                name: dir.baseName,
+                icon: null,
+                path: dir.path,
+                key: Key(randomAlpha(5)),
+              ),
+            addFolder(),
+          ],
+        ),
+      );
+    }
+
+    if (_fsProvider.rootPathFolders.isEmpty) {
+      _fsProvider.updateRootPathFoldersList();
+      return buildInitialView(context);
+    } else {
+      return buildView(context);
+    }
   }
 }

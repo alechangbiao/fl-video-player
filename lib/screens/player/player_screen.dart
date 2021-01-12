@@ -12,26 +12,41 @@ class PlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building Player Page...');
-    VideoPlayerService _videoPlayerService = Provider.of<VideoPlayerService>(context);
+    // print('Building Player Page...');
+    VideoPlayerService _videoPlayerService =
+        Provider.of<VideoPlayerService>(context);
+
+    // return Dismissible(
+    //   key: UniqueKey(),
+    //   direction: DismissDirection.down,
+    //   onDismissed: (direction) {
+    //     Navigator.maybePop(context);
+    //     Future.delayed(Duration(milliseconds: 200), () => _handlePop(_videoPlayerService));
+    //   },
+    // );
 
     return WillPopScope(
       onWillPop: () => _handlePop(_videoPlayerService),
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.maybePop(context),
+          onPressed: () => Navigator.of(context).maybePop(),
           child: Icon(Icons.arrow_left, size: 30),
         ),
         body: GestureDetector(
-          onVerticalDragStart: (details) {
-            print("object");
-          },
+          // print("Vertical Drag Down: details - $details"),
+          onVerticalDragDown: (details) => null,
+          // print("Vertical Drag Start: details - $details"),
+          onVerticalDragStart: (details) => null,
+          // print("Vertical Drag End: details - $details"),
+          onVerticalDragEnd: (details) => null,
+          // onVerticalDragUpdate: (details) => print("Vertical Drag Update: details - $details"),
           child: OrientationBuilder(
             builder: (context, orientation) {
               return Center(
                 child: _videoPlayerService.initialized
                     ? AspectRatio(
-                        aspectRatio: _videoPlayerService.controller.value.aspectRatio,
+                        aspectRatio:
+                            _videoPlayerService.controller.value.aspectRatio,
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: <Widget>[

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/localization/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:app/screens/settings/storage.dart';
 import 'package:app/services/navigation_service.dart';
 import 'package:app/services/theme.dart';
@@ -22,8 +22,8 @@ class SettingsStack extends StatelessWidget {
   }
 
   Widget _buildStack(BuildContext context) {
-    AppPreferences _preferences = Provider.of<AppPreferences>(context);
-    AppTheme _theme = Provider.of<AppTheme>(context);
+    AppPreferences _prefProvider = Provider.of<AppPreferences>(context);
+    AppTheme _themeProvider = Provider.of<AppTheme>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +32,7 @@ class SettingsStack extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           Text(
-            AppLocalizations.of(context).app_name,
+            AppLocalizations.of(context).appName,
             style: TextStyle(
               fontSize: Theme.of(context).textTheme.headline4.fontSize,
             ),
@@ -41,10 +41,10 @@ class SettingsStack extends StatelessWidget {
           ListTile(
             title: Text("Dark Mode"),
             trailing: Switch(
-              value: _preferences.isDarkTheme,
+              value: _prefProvider.isDarkTheme,
               onChanged: (value) async {
-                await _preferences.setIsDarkTheme(value);
-                _theme.setTheme(theme: value ? 'dark' : 'light');
+                await _prefProvider.setIsDarkTheme(value);
+                _themeProvider.setTheme(theme: value ? 'dark' : 'light');
               },
             ),
           ),

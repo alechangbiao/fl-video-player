@@ -18,24 +18,31 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
+  # sdk: '>=1.9.0 <2.0.0'
   sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.3
-  provider:
-  # flutter_localizations package come with flutter, not from pub.dev
+  provider: ^4.3.2+3
+  # flutter_localizations package come with flutter sdk, not from pub.dev
   flutter_localizations:
     sdk: flutter
-  shared_preferences:
-  path_provider:
-  video_player:
-  flutter_slidable: # enable list item to slide
+  intl: ^0.17.0-nullsafety.2
+  shared_preferences: ^0.5.12+4
+  path_provider: ^1.6.27 # finding commonly used locations on the filesystem.
+  video_player: '^1.0.1' # video player controller
+  video_thumbnail: ^0.2.5+1 # generates thumbnail from video file or URL
+  image_picker: ^0.6.7+21 # enable picking images from the image library, and taking new pictures with the camera.
+  flutter_slidable: ^0.5.7 # enable list item to slide
+  random_string: ^2.1.0 # generating random ascii strings.
+  # flushbar: # can use this to generate push notification alike UI
 
 dev_dependencies:
-  intl_translation:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 # For information on the generic Dart part of this file, see the
@@ -47,8 +54,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Code generation support for Localization
+  generate: true
+
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/
     - assets/intro.mp4
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,9 +1,0 @@
-{
-  "@@last_modified": "2020-08-21T11:57:30.874280",
-  "app_name": "V2 Player",
-  "@app_name": {
-    "description": "The name of the app",
-    "type": "text",
-    "placeholders": {}
-  }
-}

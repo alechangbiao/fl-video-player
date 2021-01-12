@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:app/utils/shared_pref_utils.dart';
 
+// TODO: APIs in AppPreferences & AppTheme are messed up, need to decouple them
+
 class AppPreferences with ChangeNotifier {
   static final AppPreferences _singleton = AppPreferences._internal();
 

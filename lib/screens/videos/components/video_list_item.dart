@@ -1,6 +1,7 @@
-import 'package:app/screens/player/player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:app/screens/player/player_screen.dart';
 
 class VideoListItem extends StatelessWidget {
   const VideoListItem({
@@ -19,14 +20,24 @@ class VideoListItem extends StatelessWidget {
             bottomRight: Radius.circular(8),
           ),
           child: Container(
-            // decoration: BoxDecoration(
-            //   boxShadow: <BoxShadow>[BoxShadow(color: Colors.black45, offset: Offset(0, 5), blurRadius: 2)],
-            //   borderRadius: BorderRadius.all(Radius.circular(10)),
-            // ),
-            // color: Colors.white,
             child: ListTile(
               // tileColor: Colors.white38,
               onTap: () {
+                // showGeneralDialog(
+                //   barrierLabel: "Label",
+                //   barrierDismissible: false,
+                //   barrierColor: Colors.black.withOpacity(0.5),
+                //   transitionDuration: Duration(milliseconds: 200),
+                //   context: context,
+                //   pageBuilder: (context, anim1, anim2) => PlayerScreen(),
+                //   transitionBuilder: (context, anim1, anim2, child) {
+                //     return SlideTransition(
+                //       position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+                //       child: child,
+                //     );
+                //   },
+                // );
+
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (context) => PlayerScreen(),

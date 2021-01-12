@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  
+  "appName": "V2 Player",
+  "@appName": {
+    "description": "The name of the app",
+    "type": "text",
+    "placeholders": {}
+  }
+}

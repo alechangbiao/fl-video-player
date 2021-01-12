@@ -23,7 +23,8 @@ class NavigationService with ChangeNotifier {
 
   List<GlobalKey<NavigatorState>> get navigatorKeys => _navigatorKeys;
 
-  GlobalKey<NavigatorState> get currentNavigatorkey => _navigatorKeys[_currentTabIndex];
+  GlobalKey<NavigatorState> get currentNavigatorkey =>
+      _navigatorKeys[_currentTabIndex];
 
   int get currentTabIndex => _currentTabIndex;
 

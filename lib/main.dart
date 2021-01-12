@@ -12,5 +12,8 @@ void main() async {
   // To ensure app path is not null
   await FileService.init();
 
+  // Prints information about gesture recognizers and gesture arenas.
+  // debugPrintGestureArenaDiagnostics = true;
+
   runApp(App());
 }

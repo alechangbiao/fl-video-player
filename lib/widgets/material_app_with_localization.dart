@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:app/localization/localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:app/services/theme.dart';
 
 class MaterialAppWithLocalization extends StatelessWidget {
@@ -15,15 +14,8 @@ class MaterialAppWithLocalization extends StatelessWidget {
       title: 'V2 Player',
       debugShowCheckedModeBanner: false,
       theme: Provider.of<AppTheme>(context).theme,
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate
-      ],
-      supportedLocales: [
-        Locale('en', ''),
-        Locale('zh', ''),
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: home,
     );
   }

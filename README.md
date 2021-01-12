@@ -2,46 +2,67 @@
 
 <br />
 
+## Documentation
+
+- [Configure Localization](#localization)
+
+  - [Installation](#install-dependencies)
+  - [How to use it](#usage)
+
+- [File Sharing Permissions](#enable-file-sharing-for-iOS)
+- [Image-Picker-Configuration](#image-picker)
+- [Issues & Solutions](#issues-&-solutions)
+- [Todos](#todos)
+
+<br /><br />
+
 ## Localization
 
 ### Install Dependencies
 
 Edit `pubspec.yaml`:
 
-```
+```yaml
+# Add denpendecies
 dependencies:
   ...
   flutter_localizations:
     sdk: flutter
-
-dev_dependencies:
-  intl_translation:
+  intl: ^0.17.0-nullsafety.2
   ...
+
+# Enable code generation support for Localization
+flutter:
+  ...
+  generate: true
 ```
 
 <br />
 
 ### Usage
 
-**STEP 1** - Generate .arb files from AppLocalization class:
+**STEP 1** - Create `${FLUTTER_PROJECT}/lib/l10n` for input files
 
-```
-flutter pub pub run intl_translation:extract_to_arb --output-dir=lib/localization/locales lib/localization/localization.dart
+<br />
+
+**STEP 2** - In `${FLUTTER_PROJECT}/lib/l10n`, add the `app_en.arb` template file:
+
+```json
+{
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  }
+}
 ```
 
 <br />
 
-**STEP 2** - Generate Message classes from .arb files:
+**STEP 3** - Generate localization code
 
+```sh
+flutter pub get
 ```
-flutter pub pub run intl_translation:generate_from_arb --output-dir=lib/localization/locales --no-use-deferred-loading lib/localization/localization.dart lib/localization/locales/intl_*.arb
-```
-
-<br />
-
-### _Notice_
-
-DO NOT edit files in `lib/localization/locales`
 
 <br /><br />
 
@@ -53,6 +74,28 @@ cd into `ios/Runner/Info.plist` and add:
 <key>UIFileSharingEnabled</key>
 <true/>
 ```
+
+<br />
+
+## Image Picker
+
+### Install Dependencies
+
+Edit `pubspec.yaml`:
+
+```yaml
+dependencies:
+  ...
+  image_picker:
+```
+
+Add the following keys to your Info.plist file, located in `<PROJECT_ROOT>/ios/Runner/Info.plist`:
+
+`NSPhotoLibraryUsageDescription` - describe why app needs permission for the photo library. It's called _Privacy - Photo Library Usage Description_ in the visual editor.
+
+`NSCameraUsageDescription` - describe why your app needs access to the camera. It's called _Privacy - Camera Usage Description_ in the visual editor.
+
+`NSMicrophoneUsageDescription` - describe why app needs access to the microphone, if intend to record videos. It's called _Privacy - Microphone Usage Description_ in the visual editor.
 
 <br /><br />
 
@@ -68,6 +111,8 @@ cd into `ios/Runner/Info.plist` and add:
 ## Todos
 
 - Add Lisence file
+- Add snakbar to withdraw moving/deleting files
+- Add triggers when new files are added to app from AirDrop/MacBook/etc.
 - Multi-select & bulk action feature
   - Multi delete or move
   - High light folder section (dim light rest)
@@ -76,4 +121,6 @@ cd into `ios/Runner/Info.plist` and add:
 - **Air Drop** file from Mac to iPhone/iPad
 - **Air Drop** file from iPhone/iPad to Mac
 - Share file from app to other app
+- Integrate with 'File' app on iOS
+- Add file or directory to 'File' app on iOS
 - iPad layout optimization **(important)**

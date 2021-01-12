@@ -1,5 +1,4 @@
-import 'package:app/localization/localization.dart';
-import 'package:app/screens/videos/components/folder_list.dart';
+import 'package:app/screens/videos/components/app_bar_with_folder_list.dart';
 import 'package:app/screens/videos/components/video_list.dart';
 import 'package:flutter/material.dart';
 import 'package:app/services/navigation_service.dart';
@@ -14,9 +13,7 @@ class VideosStack extends StatelessWidget {
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) {
-            return _entryScreen(context);
-          },
+          builder: (context) => _entryScreen(context),
         );
       },
     );
@@ -24,18 +21,10 @@ class VideosStack extends StatelessWidget {
 
   Scaffold _entryScreen(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Videos'),
-      ),
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            AppLocalizations.of(context).app_name,
-            style: TextStyle(fontSize: Theme.of(context).textTheme.headline4.fontSize, color: Colors.blue),
-          ),
-          FolderList(),
-          Divider(),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          AppBarWithFolderList(),
+          VideoList(),
           VideoList(),
         ],
       ),

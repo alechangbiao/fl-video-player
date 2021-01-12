@@ -18,7 +18,8 @@ class Root extends StatelessWidget {
     NavigationService _nav = Provider.of<NavigationService>(context);
 
     return WillPopScope(
-      onWillPop: () async => !await _nav.currentNavigatorkey.currentState.maybePop(),
+      onWillPop: () async =>
+          !await _nav.currentNavigatorkey.currentState.maybePop(),
       child: Scaffold(
         body: IndexedStack(
           index: _nav.currentTabIndex,
