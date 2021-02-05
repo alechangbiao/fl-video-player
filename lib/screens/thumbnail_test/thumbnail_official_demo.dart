@@ -9,29 +9,30 @@ import 'package:path_provider/path_provider.dart';
 import 'package:app/services/file_service.dart';
 
 class ThumbnailRequest {
-  final String video;
-  final String thumbnailPath;
-  final ImageFormat imageFormat;
-  final int maxHeight;
-  final int maxWidth;
-  final int timeMs;
-  final int quality;
+  final String? video;
+  final String? thumbnailPath;
+  final ImageFormat? imageFormat;
+  final int? maxHeight;
+  final int? maxWidth;
+  final int? timeMs;
+  final int? quality;
 
-  const ThumbnailRequest(
-      {this.video,
-      this.thumbnailPath,
-      this.imageFormat,
-      this.maxHeight,
-      this.maxWidth,
-      this.timeMs,
-      this.quality});
+  const ThumbnailRequest({
+    this.video,
+    this.thumbnailPath,
+    this.imageFormat,
+    this.maxHeight,
+    this.maxWidth,
+    this.timeMs,
+    this.quality,
+  });
 }
 
 class ThumbnailResult {
-  final Image image;
-  final int dataSize;
-  final int height;
-  final int width;
+  final Image? image;
+  final int? dataSize;
+  final int? height;
+  final int? width;
   const ThumbnailResult({this.image, this.dataSize, this.height, this.width});
 }
 
@@ -81,9 +82,9 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
 }
 
 class GenThumbnailImage extends StatefulWidget {
-  final ThumbnailRequest thumbnailRequest;
+  final ThumbnailRequest? thumbnailRequest;
 
-  const GenThumbnailImage({Key key, this.thumbnailRequest}) : super(key: key);
+  const GenThumbnailImage({Key? key, this.thumbnailRequest}) : super(key: key);
 
   @override
   _GenThumbnailImageState createState() => _GenThumbnailImageState();
@@ -93,7 +94,7 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ThumbnailResult>(
-      future: genThumbnail(widget.thumbnailRequest),
+      future: genThumbnail(widget.thumbnailRequest!),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           final _image = snapshot.data.image;
@@ -106,7 +107,7 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
             children: <Widget>[
               Center(
                 child: Text(
-                    "Image ${widget.thumbnailRequest.thumbnailPath == null ? 'data size' : 'file size'}: $_dataSize, width:$_width, height:$_height"),
+                    "Image ${widget.thumbnailRequest?.thumbnailPath == null ? 'data size' : 'file size'}: $_dataSize, width:$_width, height:$_height"),
               ),
               Container(
                 color: Colors.grey,
@@ -128,8 +129,7 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                    "Generating the thumbnail for: ${widget.thumbnailRequest.video}..."),
+                Text("Generating the thumbnail for: ${widget.thumbnailRequest?.video}..."),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -149,17 +149,16 @@ class ThumbnailOfficialDemo extends StatefulWidget {
 class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
   final _editNode = FocusNode();
   final _video = TextEditingController(
-      text:
-          "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
+      text: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
   ImageFormat _format = ImageFormat.JPEG;
   int _quality = 50;
   int _sizeH = 0;
   int _sizeW = 0;
   int _timeMs = 0;
 
-  GenThumbnailImage _futreImage;
+  GenThumbnailImage? _futreImage;
 
-  String _tempDir;
+  String? _tempDir;
 
   @override
   void initState() {
@@ -182,8 +181,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
       ),
       Center(
         child: (_sizeH == 0)
-            ? const Text(
-                "Original of the video's height or scaled by the source aspect ratio")
+            ? const Text("Original of the video's height or scaled by the source aspect ratio")
             : Text("Max height: $_sizeH(px)"),
       ),
       Slider(
@@ -198,8 +196,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
       ),
       Center(
         child: (_sizeW == 0)
-            ? const Text(
-                "Original of the video's width or scaled by source aspect ratio")
+            ? const Text("Original of the video's width or scaled by source aspect ratio")
             : Text("Max width: $_sizeW(px)"),
       ),
       Slider(
@@ -249,7 +246,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
                       groupValue: _format,
                       value: ImageFormat.JPEG,
                       onChanged: (v) => setState(() {
-                        _format = v;
+                        _format = v!;
                         _editNode.unfocus();
                       }),
                     ),
@@ -263,7 +260,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
                       groupValue: _format,
                       value: ImageFormat.PNG,
                       onChanged: (v) => setState(() {
-                        _format = v;
+                        _format = v!;
                         _editNode.unfocus();
                       }),
                     ),
@@ -277,7 +274,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
                       groupValue: _format,
                       value: ImageFormat.WEBP,
                       onChanged: (v) => setState(() {
-                        _format = v;
+                        _format = v!;
                         _editNode.unfocus();
                       }),
                     ),
@@ -322,7 +319,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
                   child: ListView(
                     shrinkWrap: true,
                     children: <Widget>[
-                      (_futreImage != null) ? _futreImage : SizedBox(),
+                      (_futreImage != null) ? _futreImage! : SizedBox(),
                     ],
                   ),
                 ),
@@ -353,7 +350,8 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
             FloatingActionButton(
               onPressed: () async {
                 File video =
-                    await ImagePicker.pickVideo(source: ImageSource.camera);
+                    // await ImagePicker.pickVideo(source: ImageSource.camera);
+                    await ImagePicker().getVideo(source: ImageSource.camera) as File;
                 setState(() {
                   _video.text = video.path;
                 });
@@ -364,10 +362,11 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
             const SizedBox(width: 5.0),
             FloatingActionButton(
               onPressed: () async {
-                File video =
-                    await ImagePicker.pickVideo(source: ImageSource.gallery);
+                // File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+                File video = await ImagePicker().getVideo(source: ImageSource.gallery) as File;
+
                 setState(() {
-                  _video.text = video?.path;
+                  _video.text = video.path;
                 });
               },
               child: Icon(Icons.local_movies),
@@ -378,10 +377,8 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
               tooltip: "Generate a data of thumbnail",
               onPressed: () async {
                 setState(() {
-                  final String videoFile1Path =
-                      "${FileService.getRootPathSync}/intro.mp4";
-                  final String videoFile2Path =
-                      "${FileService.getRootPathSync}/Basic Theming.mp4";
+                  // final String videoFile1Path = "${FileService.getRootPathSync}/intro.mp4";
+                  final String videoFile2Path = "${FileService.getRootPathSync}/Basic Theming.mp4";
                   print("Basic Theming.mp4 path: $videoFile2Path");
                   _futreImage = GenThumbnailImage(
                       thumbnailRequest: ThumbnailRequest(
@@ -401,10 +398,8 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
               tooltip: "Generate a file of thumbnail",
               onPressed: () async {
                 setState(() {
-                  final String videoFile1Path =
-                      "${FileService.getRootPathSync}/intro.mp4";
-                  final String videoFile2Path =
-                      "${FileService.getRootPathSync}/Basic Theming.mp4";
+                  // final String videoFile1Path = "${FileService.getRootPathSync}/intro.mp4";
+                  final String videoFile2Path = "${FileService.getRootPathSync}/Basic Theming.mp4";
                   print("Basic Theming.mp4 path: $videoFile2Path");
                   _futreImage = GenThumbnailImage(
                       thumbnailRequest: ThumbnailRequest(

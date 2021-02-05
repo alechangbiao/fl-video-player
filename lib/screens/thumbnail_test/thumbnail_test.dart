@@ -34,7 +34,7 @@ class _ThumbnailImageState extends State<ThumbnailImage> {
 
 class FABs extends StatelessWidget {
   const FABs({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -52,17 +52,19 @@ class FABs extends StatelessWidget {
 
 class GenThumbnailFileButton extends StatelessWidget {
   const GenThumbnailFileButton({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   // Generate a thumbnail in memory from video file
-  Future<Uint8List> genThumbnailData(File videofile) async {
+  Future<Uint8List?> genThumbnailData(File videofile) async {
     final uint8list = await VideoThumbnail.thumbnailData(
       video: videofile.path,
       imageFormat: ImageFormat.JPEG,
-      maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      maxWidth: 128,
       quality: 25,
     );
+    return uint8list;
   }
 
   @override
@@ -77,7 +79,7 @@ class GenThumbnailFileButton extends StatelessWidget {
 
 class GenThumbnailDataButton extends StatelessWidget {
   const GenThumbnailDataButton({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   // Generate a thumbnail file from video URL
@@ -86,7 +88,8 @@ class GenThumbnailDataButton extends StatelessWidget {
       video: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
       thumbnailPath: (await getTemporaryDirectory()).path,
       imageFormat: ImageFormat.WEBP,
-      maxHeight: 64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+      maxHeight:
+          64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
       quality: 75,
     );
     return uint8list;

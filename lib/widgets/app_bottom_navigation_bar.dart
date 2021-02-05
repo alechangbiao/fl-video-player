@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/navigation_service.dart';
 
-class TabNavigationBar extends StatelessWidget {
+class AppBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavigationService _nav = Provider.of<NavigationService>(context);

@@ -7,7 +7,7 @@ import 'package:app/screens/folder/components/rename_folder_dialog.dart';
 ///     buildAppBar();
 ///
 /// When building appBar with it, execute this method as a function
-AppBar buildAppBar(BuildContext context) {
+AppBar buildAppBar(BuildContext context, {String? title}) {
   void _popMenuButtonOnSelected(value) {
     switch (value) {
       case 0:
@@ -38,7 +38,7 @@ AppBar buildAppBar(BuildContext context) {
       children: <Widget>[
         Icon(Icons.folder, color: Colors.white70),
         SizedBox(width: 10),
-        Text("Folder"),
+        Text(title ?? "Folder"),
       ],
     ),
     actions: [

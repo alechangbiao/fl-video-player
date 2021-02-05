@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class RenameFolderDialog extends StatelessWidget {
   const RenameFolderDialog({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

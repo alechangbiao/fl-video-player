@@ -5,7 +5,7 @@ import 'package:app/extensions/video_player_extension.dart';
 
 class PlayPauseOverlay extends StatelessWidget {
   const PlayPauseOverlay({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   // TODO: add dragable dot on progress indicator
@@ -36,7 +36,8 @@ class PlayPauseOverlay extends StatelessWidget {
                               child: Icon(Icons.play_arrow, color: Colors.white, size: 100.0),
                               onTap: () {
                                 _videoPlayerService.play();
-                                _videoPlayerService.hideOverlay(delay: 1500, shouldStopPreviousTask: true);
+                                _videoPlayerService.hideOverlay(
+                                    delay: 1500, shouldStopPreviousTask: true);
                               },
                             ),
                     ),
@@ -50,7 +51,7 @@ class PlayPauseOverlay extends StatelessWidget {
                           stream: _videoPlayerService.positionStream,
                           builder: (context, snapshot) {
                             return snapshot.hasData
-                                ? Text(snapshot.data.extractTimeString)
+                                ? Text(snapshot.data!.extractTimeString)
                                 : Text(_videoPlayerService.position.extractTimeString);
                           },
                         ),

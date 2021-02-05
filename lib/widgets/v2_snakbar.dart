@@ -8,8 +8,7 @@ const Duration short = Duration(seconds: 4);
 
 class V2Snackbar {
   /// Display a material snackbar
-  static void show(
-      {@required BuildContext context, Duration duration = medium}) {
+  static void show({required BuildContext context, Duration duration = medium}) {
     ThemeData _theme = Theme.of(context);
     SnackBar _snackbar = SnackBar(
       duration: duration,
@@ -27,7 +26,8 @@ class V2Snackbar {
       ),
     );
 
-    Scaffold.of(context).showSnackBar(_snackbar);
+    // Scaffold.of(context).showSnackBar(_snackbar);
+    ScaffoldMessenger.of(context).showSnackBar(_snackbar);
   }
 }
 
@@ -35,19 +35,17 @@ class CountDownTimer extends StatefulWidget {
   final double size;
   final Duration duration;
 
-  const CountDownTimer({Key key, this.size = 26, this.duration = medium})
-      : super(key: key);
+  const CountDownTimer({Key? key, this.size = 26, this.duration = medium}) : super(key: key);
 
   @override
   _CountDownTimerState createState() => _CountDownTimerState();
 }
 
-class _CountDownTimerState extends State<CountDownTimer>
-    with TickerProviderStateMixin {
-  AnimationController controller;
+class _CountDownTimerState extends State<CountDownTimer> with TickerProviderStateMixin {
+  late AnimationController controller;
 
   String get timerString {
-    Duration duration = controller.duration * controller.value;
+    Duration duration = controller.duration! * controller.value;
     return duration.inSeconds.toString();
   }
 
@@ -81,7 +79,7 @@ class _CountDownTimerState extends State<CountDownTimer>
               Positioned.fill(
                 child: AnimatedBuilder(
                   animation: controller,
-                  builder: (BuildContext context, Widget child) {
+                  builder: (BuildContext context, Widget? child) {
                     return CustomPaint(
                       painter: TimerPainter(
                         animation: controller,
@@ -96,7 +94,7 @@ class _CountDownTimerState extends State<CountDownTimer>
                 alignment: FractionalOffset.center,
                 child: AnimatedBuilder(
                   animation: controller,
-                  builder: (BuildContext context, Widget child) {
+                  builder: (BuildContext context, Widget? child) {
                     return Text(
                       timerString,
                       style: TextStyle(color: Colors.white),
@@ -117,9 +115,9 @@ class TimerPainter extends CustomPainter {
   final Color backgroundColor, color;
 
   TimerPainter({
-    this.animation,
-    this.backgroundColor,
-    this.color,
+    required this.animation,
+    required this.backgroundColor,
+    required this.color,
   }) : super(repaint: animation);
 
   @override

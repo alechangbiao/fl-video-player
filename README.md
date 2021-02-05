@@ -41,11 +41,15 @@ flutter:
 
 ### Usage
 
-**STEP 1** - Create `${FLUTTER_PROJECT}/lib/l10n` for input files
+**STEP 1** - Create `${FLUTTER_PROJECT}/l10n.ymal` for localization configuration
 
 <br />
 
-**STEP 2** - In `${FLUTTER_PROJECT}/lib/l10n`, add the `app_en.arb` template file:
+**STEP 2** - Create `${FLUTTER_PROJECT}/lib/l10n` for input files
+
+<br />
+
+**STEP 3** - In `${FLUTTER_PROJECT}/lib/l10n`, add the `app_en.arb` template file:
 
 ```json
 {
@@ -58,7 +62,7 @@ flutter:
 
 <br />
 
-**STEP 3** - Generate localization code
+**STEP 4** - Generate localization code
 
 ```sh
 flutter pub get
@@ -70,7 +74,7 @@ flutter pub get
 
 cd into `ios/Runner/Info.plist` and add:
 
-```
+```xml
 <key>UIFileSharingEnabled</key>
 <true/>
 ```

@@ -1,12 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<dynamic> readSharedPrefAsync({String key}) async {
+Future<dynamic> readSharedPrefAsync({required String key}) async {
   final prefs = await SharedPreferences.getInstance();
   dynamic value = prefs.get(key);
   return value;
 }
 
-Future<void> saveSharedPrefsAsync({String key, dynamic value}) async {
+Future<void> saveSharedPrefsAsync({required String key, dynamic value}) async {
   final prefs = await SharedPreferences.getInstance();
   if (value is String) {
     prefs.setString(key, value);
@@ -19,7 +19,7 @@ Future<void> saveSharedPrefsAsync({String key, dynamic value}) async {
   }
 }
 
-Future<void> removeharedPrefAsync({String key}) async {
+Future<void> removeharedPrefAsync({required String key}) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove(key);
 }

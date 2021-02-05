@@ -46,12 +46,12 @@ class VideoInfo {
   ///     int timeMS; // playback position of the last time
   ///     int lastWatchedAt, lastModifiedAt, trashedAt;
   VideoInfo({
-    this.id,
-    this.name,
-    this.timeMs,
-    this.createdAt,
-    this.lastWatchedAt,
-    this.lastModifiedAt,
+    required this.id,
+    required this.name,
+    required this.timeMs,
+    required this.createdAt,
+    required this.lastWatchedAt,
+    required this.lastModifiedAt,
   });
 
   /// Construct a `VideoInfo()` instance from a `JSON Map`

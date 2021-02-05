@@ -34,8 +34,8 @@ class FolderInfo {
   String id;
   String name;
   bool isPrivate;
-  String password;
-  String iconName;
+  String? password;
+  String? iconName;
   int createdAt;
   int lastModifiedAt;
 
@@ -47,13 +47,13 @@ class FolderInfo {
   ///     bool isPrivate; // whether this directory is private
   ///     int createdAt, lastModifiedAt; // timeStamps
   FolderInfo({
-    this.id,
-    this.name,
-    this.isPrivate,
+    required this.id,
+    required this.name,
+    required this.isPrivate,
     this.password,
     this.iconName,
-    this.createdAt,
-    this.lastModifiedAt,
+    required this.createdAt,
+    required this.lastModifiedAt,
   });
 
   /// Construct a `FolderInfo()` instance from a `JSON Map`

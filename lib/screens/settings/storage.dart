@@ -144,5 +144,5 @@ class Item {
   String status;
   String name;
 
-  Item({@required this.id, @required this.title, @required this.status, @required this.name});
+  Item({required this.id, required this.title, required this.status, required this.name});
 }

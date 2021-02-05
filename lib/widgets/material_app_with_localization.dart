@@ -6,7 +6,7 @@ import 'package:app/services/theme.dart';
 class MaterialAppWithLocalization extends StatelessWidget {
   final Widget home;
 
-  MaterialAppWithLocalization({@required this.home});
+  MaterialAppWithLocalization({required this.home});
 
   @override
   Widget build(BuildContext context) {

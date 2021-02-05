@@ -1,5 +1,5 @@
 class TrashInfo {
-  String name;
-  String path;
-  int trashedAt;
+  late String name;
+  late String path;
+  late int trashedAt;
 }

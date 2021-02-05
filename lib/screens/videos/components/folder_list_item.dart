@@ -1,42 +1,40 @@
 import 'package:app/services/file_service.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app/models/foler_info.dart';
+import 'package:app/models/folder_info.dart';
 import 'package:app/services/navigation_service.dart';
 import 'package:app/screens/folder/folder_screen.dart';
 import 'package:app/utils/folder_icon.dart';
 
 class FolderListItem extends StatefulWidget {
-  final String path;
+  final String? path;
   final String name;
-  final IconData icon;
-  final Function onTap;
+  final IconData? icon;
+  final Function? onTap;
 
   /// Construct a [StatefulWidget] to show in the [SliverAppBar]
   ///
   ///     String path, name;  // initial path & name
   ///     IconData icon;  // initial icon to show
   FolderListItem({
-    @required Key key,
-    @required this.name,
+    required this.name,
     this.path,
     this.icon,
     this.onTap,
-  }) : super(key: key);
+  }) : super(key: Key(name));
 
   @override
   _FolderListItemState createState() => _FolderListItemState();
 }
 
 class _FolderListItemState extends State<FolderListItem> {
-  String path;
-  FolderInfo folderInfo;
-  String name;
-  IconData icon;
+  String? path;
+  FolderInfo? folderInfo;
+  String? name;
+  IconData? icon;
 
   @override
   void initState() {
-    print('folder list item: initState get  called');
     super.initState();
     this.path = widget.path;
     this.name = widget.name;
@@ -44,32 +42,32 @@ class _FolderListItemState extends State<FolderListItem> {
     _getFolderInfo(path: this.path);
   }
 
-  Future<void> _getFolderInfo({@required String path}) async {
-    this.folderInfo = await FileService().getFolerInfo(path: path);
+  Future<void> _getFolderInfo({@required String? path}) async {
+    this.folderInfo = await FileService().getFolderInfo(path: path);
     setState(() {
       // this.name = this.folderInfo.name;
       // this.icon = this.folderInfo.iconName.getIcon;
-      this.icon = FolderIcons.name(this.folderInfo.iconName);
+      this.icon = FolderIcons.name(this.folderInfo!.iconName);
     });
   }
 
   /// When name changes, `this.path` needs to be updated as well.
-  void _changeName({@required String newName}) {
+  void _changeName({required String newName}) {
     setState(() => this.name = newName);
     //TODO: update current path
   }
 
   /// When path changes, `this.name` needs to be updated as well.
-  void _changePath(@required String newPath) {}
+  void _changePath(String newPath) {}
 
   void _onTap() {
     if (widget.onTap != null) {
-      widget.onTap();
+      widget.onTap!();
     } else {
-      NavigationService.currentStackState.push(
-        MaterialPageRoute(
-          builder: (context) => FolderScreen(path: this.path),
-        ),
+      NavigationService.navigateTo(
+        '/folder',
+        arguments: FolderScreenArguments(path: this.path),
+        path: this.path,
       );
     }
   }
@@ -96,7 +94,7 @@ class _FolderListItemState extends State<FolderListItem> {
             SizedBox(
               width: 60,
               child: Text(
-                this.name,
+                this.name!,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 10),
                 textAlign: TextAlign.center,

@@ -13,3 +13,5 @@ class AppLayout {
   static const double screenEdgeMargin = 20;
   static const double appBarActionMargin = 10;
 }
+
+const List<String> SupportedVideoTypes = <String>['mp4', 'avi', 'mov', 'm4v', '3gp'];

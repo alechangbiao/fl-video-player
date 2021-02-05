@@ -16,7 +16,7 @@ List<Widget> _itemList = <Widget>[
 
 class VideoList extends StatelessWidget {
   const VideoList({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

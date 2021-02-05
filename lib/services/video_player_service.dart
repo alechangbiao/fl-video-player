@@ -5,7 +5,7 @@ import 'package:video_player/video_player.dart';
 import 'package:random_string/random_string.dart';
 
 class VideoPlayerService with ChangeNotifier {
-  VideoPlayerController _controller;
+  late VideoPlayerController _controller;
 
   bool _isOverlayVisible = true;
 
@@ -97,8 +97,7 @@ class VideoPlayerService with ChangeNotifier {
       setOverlayVisibility = false;
     } else {
       Future.delayed(Duration(milliseconds: delay), () {
-        if (_hidingOverlayTaskQueue.contains(taskId))
-          setOverlayVisibility = false;
+        if (_hidingOverlayTaskQueue.contains(taskId)) setOverlayVisibility = false;
         if (shouldStopPreviousTask) _hidingOverlayTaskQueue.clear();
       });
     }

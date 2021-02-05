@@ -14,7 +14,7 @@ class AppPreferences with ChangeNotifier {
 
   static final String keyIsDarkTheme = "isDarkTheme";
 
-  bool _isDarkTheme;
+  late bool _isDarkTheme;
 
   bool get isDarkTheme => this._isDarkTheme;
 

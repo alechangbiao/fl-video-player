@@ -1,10 +1,16 @@
-import 'package:app/utils/constants.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:app/utils/folder_icon.dart';
+import 'package:app/utils/constants.dart';
+import 'package:app/services/file_service.dart';
 
 class SelectIconScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FileService _fsProvider = Provider.of<FileService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Icon'),
@@ -28,7 +34,17 @@ class SelectIconScreen extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     FolderIcon folderIcon = FolderIcons.allIcons[index];
                     return InkWell(
-                        onTap: () => print(folderIcon.name),
+                        onTap: () async {
+                          print(folderIcon.name);
+
+                          await _fsProvider.updateCurrentPathFolderInfoFile(
+                            iconName: folderIcon.name,
+                          );
+                          // print(await info.readAsString());
+                          await _fsProvider.reloadRootPathFoldersList();
+
+                          Navigator.of(context).pop();
+                        },
                         child: Ink(
                           decoration: BoxDecoration(
                             color: AppColors.lightBlueGrey.withOpacity(0.5),

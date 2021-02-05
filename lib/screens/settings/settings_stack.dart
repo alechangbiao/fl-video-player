@@ -32,9 +32,9 @@ class SettingsStack extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           Text(
-            AppLocalizations.of(context).appName,
+            AppLocalizations.of(context)!.appName,
             style: TextStyle(
-              fontSize: Theme.of(context).textTheme.headline4.fontSize,
+              fontSize: Theme.of(context).textTheme.headline4?.fontSize,
             ),
           ),
           Divider(height: 1),
@@ -72,9 +72,9 @@ class SettingsStack extends StatelessWidget {
               print('onTap');
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
-              NavigationService.currentStackState.push(
+              NavigationService.currentStackState?.push(
                 MaterialPageRoute(
                   builder: (context) => Storage(),
                 ),

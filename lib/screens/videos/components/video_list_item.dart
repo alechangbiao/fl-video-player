@@ -5,7 +5,7 @@ import 'package:app/screens/player/player_screen.dart';
 
 class VideoListItem extends StatelessWidget {
   const VideoListItem({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -71,7 +71,8 @@ class VideoListItem extends StatelessWidget {
         ],
         secondaryActions: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10)),
+            borderRadius:
+                BorderRadius.only(bottomLeft: Radius.circular(10), topLeft: Radius.circular(10)),
             child: IconSlideAction(
               caption: 'More',
               color: Colors.black45,
@@ -80,7 +81,8 @@ class VideoListItem extends StatelessWidget {
             ),
           ),
           ClipRRect(
-            borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
+            borderRadius:
+                BorderRadius.only(bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
             child: IconSlideAction(
               caption: 'Delete',
               color: Colors.red,

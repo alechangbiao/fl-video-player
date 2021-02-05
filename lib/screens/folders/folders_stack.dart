@@ -12,7 +12,7 @@ class FoldersStack extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Building Resources Stack...');
     return Navigator(
-      key: NavigationService.kResourcesStack,
+      key: NavigationService.kFoldersStack,
       onGenerateRoute: (settings) => MaterialPageRoute(
         settings: settings,
         builder: (context) {
@@ -24,19 +24,19 @@ class FoldersStack extends StatelessWidget {
 
   Widget _renderStack(BuildContext context) {
     final _title = Text(
-      AppLocalizations.of(context).appName,
+      AppLocalizations.of(context)!.appName,
       style: TextStyle(
-        fontSize: Theme.of(context).textTheme.headline4.fontSize,
+        fontSize: Theme.of(context).textTheme.headline4?.fontSize,
         color: Colors.orange,
       ),
     );
 
     final _actionTester = <Widget>[
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => V2Snackbar.show(context: context),
         child: Text('Try Snack Bar'),
       ),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => showCupertinoModalPopup(
           context: context,
           builder: (context) => CupertinoActionSheet(
@@ -66,57 +66,65 @@ class FoldersStack extends StatelessWidget {
     ];
 
     final _pathTester = <Widget>[
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService.getRootPathSync,
         child: Text('check local path'),
+      ),
+      ElevatedButton(
+        onPressed: () => FileService().goBack(level: 2),
+        child: Text('check go back'),
       ),
       Divider(),
     ];
 
     final _fileDirectoryTester = <Widget>[
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService().listRootPathFiles(testing: true),
         child: Text('get a list of files'),
       ),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService().rootPathFolders,
         child: Text('get a list of directories'),
       ),
       Divider(),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => '${FileService.getRootPathSync}/test_new_dir'.isDirectory,
         child: Text('check is directory'),
       ),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => '${FileService.getRootPathSync}/test_new_dir'.isFile,
         child: Text('check is file'),
       ),
       Divider(),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService().createDirectory(name: null),
         child: Text('create directory'),
       ),
-      RaisedButton(
-        onPressed: () => FileService().moveFile(file: null, to: null),
+      ElevatedButton(
+        onPressed: () {
+          // FileService().moveFile(file: null, to: null);
+        },
         child: Text('move file'),
       ),
-      RaisedButton(
-        onPressed: () => FileService().moveFile(file: null, to: null),
+      ElevatedButton(
+        onPressed: () {
+          // FileService().moveFile(file: null, to: null)
+        },
         child: Text('move directory'),
       ),
       Divider(),
     ];
 
-    final _dotLocalTester = <Widget>[
-      RaisedButton(
+    final _dotInfoTester = <Widget>[
+      ElevatedButton(
         onPressed: () => FileService().getRootPathFolderInfo(testing: true),
         child: Text('check .info file'),
       ),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService().isFolderInfoFileExists(testing: true),
         child: Text('check .info existance'),
       ),
-      RaisedButton(
+      ElevatedButton(
         onPressed: () => FileService().createFolerInfoFile(
           path: null,
           testing: true,
@@ -127,16 +135,16 @@ class FoldersStack extends StatelessWidget {
     ];
 
     final _thumbnailTester = <Widget>[
-      RaisedButton(
-        onPressed: () => NavigationService.currentStackState.push(
+      ElevatedButton(
+        onPressed: () => NavigationService.currentStackState?.push(
           MaterialPageRoute(
             builder: (context) => ThumbnailOfficialDemo(),
           ),
         ),
         child: Text('Thumbnail Demo'),
       ),
-      RaisedButton(
-        onPressed: () => NavigationService.currentStackState.push(
+      ElevatedButton(
+        onPressed: () => NavigationService.currentStackState?.push(
           MaterialPageRoute(
             builder: (context) => ThumbnailTest(),
           ),
@@ -158,7 +166,7 @@ class FoldersStack extends StatelessWidget {
             for (Widget i in _actionTester) i,
             for (Widget i in _pathTester) i,
             for (Widget i in _fileDirectoryTester) i,
-            for (Widget i in _dotLocalTester) i,
+            for (Widget i in _dotInfoTester) i,
             for (Widget i in _thumbnailTester) i,
           ],
         ),

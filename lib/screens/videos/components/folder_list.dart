@@ -1,27 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:random_string/random_string.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/file_service.dart';
 import 'package:app/screens/videos/components/folder_list_item.dart';
 
 class FolderList extends StatelessWidget {
   const FolderList({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print('Building FolderList Component...');
     FileService _fsProvider = Provider.of<FileService>(context);
-
-    // List<FolderInfo> _subFolderInfos = [];
 
     Widget addFolder() {
       return FolderListItem(
         name: 'Add Folder',
         icon: Icons.add,
-        key: null,
         onTap: () async {
           await _fsProvider.createDirectory(name: null);
           _fsProvider.updateRootPathFoldersList();
@@ -51,14 +48,11 @@ class FolderList extends StatelessWidget {
             FolderListItem(
               name: 'Private',
               icon: Icons.lock,
-              key: Key(randomAlpha(5)),
             ),
             for (Directory dir in _fsProvider.rootPathFolders)
               FolderListItem(
                 name: dir.baseName,
-                icon: null,
                 path: dir.path,
-                key: Key(randomAlpha(5)),
               ),
             addFolder(),
           ],

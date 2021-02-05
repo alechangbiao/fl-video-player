@@ -79,7 +79,7 @@ class AppTheme with ChangeNotifier {
   /// class is instantiated during the entire life of the app.
   ///
   /// Especially **not** using it to create *ChangeNotifierProvider*
-  void setTheme({@required String theme}) {
+  void setTheme({required String theme}) {
     switch (theme) {
       case 'light':
         setLightTheme();

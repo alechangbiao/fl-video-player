@@ -10,7 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:random_string/random_string.dart';
 
 import 'package:app/models/video_info.dart';
-import 'package:app/models/foler_info.dart';
+import 'package:app/models/folder_info.dart';
+import 'package:app/utils/constants.dart';
 
 /// A service class to manage files in app directory
 ///
@@ -21,11 +22,11 @@ class FileService with ChangeNotifier {
     if (_rootPath == null) setPaths();
   }
 
-  static String _rootPath;
-  static String _currentPath;
+  static String? _rootPath;
+  static String? _currentPath;
 
   /// Make sure `FileService.init()` has been called before using this method.
-  static String get getRootPathSync => _rootPath;
+  static String? get getRootPathSync => _rootPath;
 
   static Future<void> init() async {
     if (_rootPath != null) {
@@ -36,9 +37,15 @@ class FileService with ChangeNotifier {
     _currentPath = _rootPath = directory.path;
   }
 
-  String get rootPath => _rootPath;
+  String? get rootPath => _rootPath;
 
-  String get currentPath => _currentPath;
+  String? get currentPath => _currentPath;
+
+  set currentPath(String? path) {
+    if (_currentPath == path) return;
+    _currentPath = path;
+    print('current path has changed to: ${this.currentPath}');
+  }
 
   /// Constructor can not be async, hense this method is created
   Future<void> setPaths() async {
@@ -46,7 +53,14 @@ class FileService with ChangeNotifier {
     _currentPath ??= _rootPath;
   }
 
-  Future<String> get getRootPath async {
+  /// Navigate current path by `<int>level`
+  void goBack({int level = 1}) {
+    List<String> splitedPath = currentPath!.split('/');
+    splitedPath.removeRange(splitedPath.length - level, splitedPath.length);
+    currentPath = splitedPath.join('/');
+  }
+
+  Future<String?> get getRootPath async {
     if (_rootPath != null) return _rootPath;
     final Directory directory = await getApplicationDocumentsDirectory();
     return directory.path;
@@ -54,7 +68,7 @@ class FileService with ChangeNotifier {
 
   /// List all the files in the given path of a directory
   Future<List<FileSystemEntity>> _listFiles(
-    String path, {
+    String? path, {
     bool testing = false,
   }) async {
     _rootPath ?? await setPaths(); // make sure _rootPath is not null
@@ -79,7 +93,7 @@ class FileService with ChangeNotifier {
 
   /// Create a directory, default name to `'untitled' + incremental suffix`
   /// (eg. untitled 2) if name is not provided
-  Future<Directory> createDirectory({@required String name, String path}) async {
+  Future<Directory> createDirectory({required String? name, String? path}) async {
     _rootPath ?? await setPaths();
     path = path ?? _currentPath ?? _rootPath;
 
@@ -112,13 +126,13 @@ class FileService with ChangeNotifier {
   }
 
   Future<bool> _isFileExists({
-    @required String fileBaseName,
-    @required String path,
+    @required String? fileBaseName,
+    @required String? path,
     bool testing = false,
   }) async {
     path = testing ? '$rootPath/test' : path ?? _currentPath ?? _rootPath;
     bool exists = await File('$path/$fileBaseName').exists();
-    print('File $path/$fileBaseName exists: $exists.');
+    // print('File $path/$fileBaseName exists: $exists.');
     return exists;
   }
 
@@ -126,7 +140,7 @@ class FileService with ChangeNotifier {
   ///
   /// Using rename as it is probably faster.
   /// If rename fails, copy the source file and then delete it
-  Future<dynamic> moveFile({@required File file, @required String to}) async {
+  Future<dynamic> moveFile({required File file, required String to}) async {
     try {
       return await file.rename(to);
     } on FileSystemException catch (e) {
@@ -138,7 +152,7 @@ class FileService with ChangeNotifier {
   }
 
   // TODO: Complete the functionality of belowing API
-  Future<dynamic> moveDirectory({@required Directory directory, @required String to}) {}
+  Future<dynamic>? moveDirectory({required Directory directory, required String to}) {}
 }
 
 /// `<Directory>Folder` Service
@@ -164,6 +178,19 @@ extension FoldersExtension on FileService {
 
   Future<List<Directory>> updateRootPathFoldersList() async {
     rootPathFolders = await _listFolders(rootPath);
+    //TODO: Check if .trash & .default_private directories exists
+    return _rootPathFolders;
+  }
+
+  /// Force update `_rootPathFolders`
+  ///
+  /// Empty the list first then infate it with updated data
+  Future<List<Directory>> reloadRootPathFoldersList() async {
+    rootPathFolders = <Directory>[];
+    // a short delay (200 milliseconds) to ensure listeners emptying list taken effect
+    Future.delayed(const Duration(milliseconds: 200), () async {
+      rootPathFolders = await _listFolders(rootPath);
+    });
     return _rootPathFolders;
   }
 
@@ -180,9 +207,9 @@ extension FoldersExtension on FileService {
     List<FileSystemEntity> files = Directory("$path/").listSync();
     await Future.forEach(files, (FileSystemEntity file) async {
       bool isDirectoy = await file.path.isDirectory;
-      if (isDirectoy) folers.add(file);
+      if (isDirectoy) folers.add(file as Directory);
     });
-    for (Directory foler in folers) print("${foler.baseName}");
+    // for (Directory foler in folers) print("${foler.baseName}");
     return folers;
   }
 }
@@ -191,58 +218,57 @@ extension FoldersExtension on FileService {
 ///
 /// Helper Methods on folderInfo object related tasks
 extension FolderInfoExtension on FileService {
-  static FolderInfo _rootPathFolerInfo;
-  static FolderInfo _currentPathFolerInfo;
+  static FolderInfo? _rootPathFolerInfo;
+  static FolderInfo? _currentPathFolerInfo;
 
-  FolderInfo get rootPathFolerInfo => _rootPathFolerInfo;
+  FolderInfo? get rootPathFolerInfo => _rootPathFolerInfo;
 
-  FolderInfo get currentPathFolerInfo => _currentPathFolerInfo;
+  FolderInfo? get currentPathFolerInfo => _currentPathFolerInfo;
 
-  Future<bool> isFolderInfoFileExists({String path, bool testing = false}) async {
+  Future<bool> isFolderInfoFileExists({String? path, bool testing = false}) async {
     return await this._isFileExists(fileBaseName: '.info', path: path, testing: testing);
   }
 
   Future<FolderInfo> getRootPathFolderInfo({bool testing = false}) async {
-    return this.getFolerInfo(path: rootPath, testing: testing);
+    return this.getFolderInfo(path: rootPath, testing: testing);
   }
 
   Future<FolderInfo> getCurrentPathFolderInfo({bool testing = false}) async {
-    return this.getFolerInfo(path: currentPath, testing: testing);
+    return this.getFolderInfo(path: currentPath, testing: testing);
   }
 
   /// Collet information from `.info` file
   ///
   /// Create a new `.info` file if coundn't find any in the path
-  Future<FolderInfo> getFolerInfo({@required String path, bool testing = false}) async {
+  Future<FolderInfo> getFolderInfo({@required String? path, bool testing = false}) async {
     path = testing ? '$rootPath/test' : path ?? currentPath ?? rootPath;
     bool fileExists = await _isFileExists(fileBaseName: '.info', path: path);
     if (fileExists) {
-      print('Found .info in $path');
       String jsonContent = await File('$path/.info').readAsString();
-      print(jsonContent);
+      // print('Found .info in "${path.baseName}": $jsonContent');
       return FolderInfo.fromJsonString(jsonContent);
     } else {
-      print('.info not found in $path \n creating a new file...');
+      // print('.info not found in $path \n creating a new file...');
       File file = await this.createFolerInfoFile(path: path, testing: testing);
       String jsonContent = await file.readAsString();
-      print(jsonContent);
+      // print(jsonContent);
       return FolderInfo.fromJsonString(jsonContent);
     }
   }
 
   /// Create an object of [FolderInfo] and save it in `.info` file as JSON String
   Future<File> createFolerInfoFile({
-    @required String path,
+    @required String? path,
     bool isPrivate = false,
-    String password,
-    String iconName,
+    String? password,
+    String? iconName,
     bool testing = false,
   }) async {
     path = testing ? '$rootPath/test' : path ?? currentPath ?? rootPath;
     int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
     FolderInfo info = FolderInfo(
       id: randomAlpha(6),
-      name: path.baseName,
+      name: path!.baseName,
       password: password,
       iconName: iconName,
       isPrivate: isPrivate,
@@ -252,47 +278,77 @@ extension FolderInfoExtension on FileService {
     return await File('$path/.info').writeAsString(FolderInfo.toJsonString(info));
   }
 
-  // TODO: Complete the functionality of belowing API
-  Future<dynamic> updateFolderInfoFile({@required String path}) async {}
+  Future<File?> updateCurrentPathFolderInfoFile({
+    String? name,
+    String? password,
+    String? iconName,
+    bool? isPrivate,
+  }) async {
+    return this._updateFolderInfoFile(
+      path: currentPath,
+      name: name,
+      password: password,
+      iconName: iconName,
+      isPrivate: isPrivate,
+    );
+  }
+
+  Future<File?> _updateFolderInfoFile({
+    @required String? path,
+    String? name,
+    String? password,
+    String? iconName,
+    bool? isPrivate,
+  }) async {
+    if (name == null && password == null && iconName == null && isPrivate == null) return null;
+    FolderInfo info = await this.getFolderInfo(path: path);
+    if (name != null) info.name = name;
+    if (password != null) info.password = password;
+    if (iconName != null) info.iconName = iconName;
+    if (isPrivate != null) info.isPrivate = isPrivate;
+    int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+    info.lastModifiedAt = nowTimeStamp;
+    return await File('$path/.info').writeAsString(FolderInfo.toJsonString(info));
+  }
 }
 
 extension SubFoldersInfoesExtension on FileService {
-  static List<FolderInfo> _rootPathSubFoldersInfoes;
-  static List<FolderInfo> _currentPathSubFoldersInfoes;
+  static List<FolderInfo>? _rootPathSubFoldersInfoes;
+  static List<FolderInfo>? _currentPathSubFoldersInfoes;
 
-  List<FolderInfo> get rootPathSubFoldersInfoes => _rootPathSubFoldersInfoes;
+  List<FolderInfo>? get rootPathSubFoldersInfoes => _rootPathSubFoldersInfoes;
 
-  List<FolderInfo> get currentPathSubFoldersInfoes => _currentPathSubFoldersInfoes;
+  List<FolderInfo>? get currentPathSubFoldersInfoes => _currentPathSubFoldersInfoes;
 
-  set rootPathSubFoldersInfoes(List<FolderInfo> infoes) {
+  set rootPathSubFoldersInfoes(List<FolderInfo>? infoes) {
     _rootPathSubFoldersInfoes = infoes;
     notifyListeners();
   }
 
-  set currentPathSubFoldersInfoes(List<FolderInfo> infoes) {
+  set currentPathSubFoldersInfoes(List<FolderInfo>? infoes) {
     _currentPathSubFoldersInfoes = infoes;
     notifyListeners();
   }
 
-  Future<List<FolderInfo>> updateRootPathSubFoldersInfoes() async {
+  Future<List<FolderInfo>?> updateRootPathSubFoldersInfoes() async {
     rootPathSubFoldersInfoes = await this._listSubFolersInfoes(rootPath);
     return _rootPathSubFoldersInfoes;
   }
 
-  Future<List<FolderInfo>> updateCurrentPathSubFoldersInfoes() async {
+  Future<List<FolderInfo>?> updateCurrentPathSubFoldersInfoes() async {
     currentPathSubFoldersInfoes = await this._listSubFolersInfoes(currentPath);
     return _currentPathSubFoldersInfoes;
   }
 
   /// Collect information from all the `.info` files of sub-directories'
   /// of the given path which defaluts to the current working directory
-  Future<List<FolderInfo>> _listSubFolersInfoes(String path) async {
+  Future<List<FolderInfo>> _listSubFolersInfoes(String? path) async {
     assert(path != null, 'path should not be null');
     print('Listing sub-folder infos in path: \n$path');
     final List<Directory> subFolers = await this._listFolders(path);
     List<FolderInfo> infoes = [];
     await Future.forEach(subFolers, (Directory subFolder) async {
-      FolderInfo subFolderInfo = await this.getFolerInfo(path: subFolder.path);
+      FolderInfo subFolderInfo = await this.getFolderInfo(path: subFolder.path);
       infoes.add(subFolderInfo);
     });
     return infoes;
@@ -300,12 +356,42 @@ extension SubFoldersInfoesExtension on FileService {
 }
 
 extension VideoFilesExtension on FileService {
-  static List<File> _rootPathVideoFiles;
-  static List<File> _currentPathVideoFiles;
+  static List<File>? _rootPathVideoFiles;
+  static List<File>? _currentPathVideoFiles;
 
-  List<File> get rootPathVideoFiles => _rootPathVideoFiles;
+  List<File>? get rootPathVideoFiles => _rootPathVideoFiles;
 
-  List<File> get currentPathVideoFiles => _currentPathVideoFiles;
+  List<File>? get currentPathVideoFiles => _currentPathVideoFiles;
+
+  set rootPathVideoFiles(List<File>? videoFiles) {
+    _rootPathVideoFiles = videoFiles;
+    notifyListeners();
+  }
+
+  set currentPathVideoFiles(List<File>? videoFiles) {
+    _currentPathVideoFiles = videoFiles;
+    notifyListeners();
+  }
+
+  Future<List<File>?> updateRootPathVideosList() async {
+    rootPathVideoFiles = await _listVideos(rootPath);
+    for (File videoFile in _rootPathVideoFiles!) {
+      print(videoFile.path);
+    }
+    return _rootPathVideoFiles;
+  }
+
+  Future<List<File>> _listVideos(path) async {
+    assert(path != null, 'path should not be null');
+    rootPath ?? await setPaths();
+
+    List<File> videos = <File>[];
+    List<FileSystemEntity> files = Directory("$path/").listSync();
+    files.forEach((FileSystemEntity file) {
+      if (file.isVideo) videos.add(file as File);
+    });
+    return videos;
+  }
 }
 
 extension VideosInfoesExtension on FileService {
@@ -316,7 +402,7 @@ extension VideosInfoesExtension on FileService {
 
   List<VideoInfo> get currentPathVideosInfoes => _currentPathVideosInfoes;
 
-  Future<bool> isVideosInfoFileExists({String path}) async {
+  Future<bool> isVideosInfoFileExists({String? path}) async {
     return await this._isFileExists(fileBaseName: '.videos_infoes', path: path);
   }
 
@@ -330,7 +416,7 @@ extension VideosInfoesExtension on FileService {
   }
 
   // TODO: Complete the functionality of belowing API
-  Future<dynamic> updateVideoInfoFile() {}
+  Future<dynamic>? updateVideoInfoFile() {}
 }
 
 extension FileServiceUtilsExtension on FileSystemEntity {
@@ -340,6 +426,13 @@ extension FileServiceUtilsExtension on FileSystemEntity {
   String get baseName {
     String baseName = this.path.split('/').last;
     return baseName;
+  }
+
+  /// getter method
+  ///
+  /// Returns `true` if given FileSystemEntity is a video file
+  bool get isVideo {
+    return this.path.isVideo;
   }
 }
 
@@ -351,6 +444,14 @@ extension FilePathUtilsExtension on String {
     // if (path == null) path = '$_path/test/';
     final bool isDirectory = await FileSystemEntity.isDirectory(this);
     return isDirectory;
+  }
+
+  /// getter method
+  ///
+  /// Returns `true` if given path can resolve a video file
+  bool get isVideo {
+    final fileType = this.baseName.split('.').last;
+    return SupportedVideoTypes.contains(fileType);
   }
 
   /// **Async** getter

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class AppBarWithFolderList extends StatelessWidget {
   const AppBarWithFolderList({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class FolderIcons {
   /// Returns an icon by a given name
-  static IconData name(String name) {
+  static IconData? name(String? name) {
     if (name == null) return null;
     FolderIcon item = _folderIcons.firstWhere(
       (element) => element.name == name,
-      orElse: () => null,
+      // orElse: () => null,
     );
     return item.icon;
   }
@@ -18,7 +18,7 @@ class FolderIcon {
   final String name;
   final IconData icon;
 
-  FolderIcon({this.name, this.icon});
+  FolderIcon({required this.name, required this.icon});
 }
 
 List<FolderIcon> _folderIcons = [
@@ -77,5 +77,5 @@ class IconNames {
 
 extension FolderIconUtilsExtension on String {
   /// Get and icon by its name String
-  IconData get getIcon => FolderIcons.name(this);
+  IconData? get getIcon => FolderIcons.name(this);
 }
