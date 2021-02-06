@@ -39,3 +39,8 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# App assets for development
+/assets/intro.mp4
+
+pubspec.lock
