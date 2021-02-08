@@ -1,4 +1,3 @@
-import 'package:app/screens/thumbnail_test/thumbnail_test.dart';
 import 'package:app/widgets/v2_snakbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +5,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:app/services/file_service.dart';
 import 'package:app/services/navigation_service.dart';
 import 'package:app/screens/thumbnail_test/thumbnail_official_demo.dart';
+import 'package:app/screens/thumbnail_test/thumbnail_test_screen.dart';
 
-class FoldersStack extends StatelessWidget {
+class AddStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('Building Resources Stack...');
     return Navigator(
-      key: NavigationService.kFoldersStack,
+      key: NavigationService.kAddStack,
       onGenerateRoute: (settings) => MaterialPageRoute(
         settings: settings,
         builder: (context) {
@@ -146,7 +146,7 @@ class FoldersStack extends StatelessWidget {
       ElevatedButton(
         onPressed: () => NavigationService.currentStackState?.push(
           MaterialPageRoute(
-            builder: (context) => ThumbnailTest(),
+            builder: (context) => ThumbnailTestScreen(),
           ),
         ),
         child: Text('Thumbnail Test'),

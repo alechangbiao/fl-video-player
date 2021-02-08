@@ -64,11 +64,17 @@ class _FolderListItemState extends State<FolderListItem> {
     if (widget.onTap != null) {
       widget.onTap!();
     } else {
-      NavigationService.navigateTo(
-        '/folder',
-        arguments: FolderScreenArguments(path: this.path),
-        path: this.path,
+      NavigationService.currentStackState?.push(
+        MaterialPageRoute(
+          builder: (context) => FolderScreen(path: this.path!),
+          // builder: (context) => Scaffold(),
+        ),
       );
+      // NavigationService.navigateTo(
+      //   '/folder',
+      //   arguments: FolderScreenArguments(path: this.path),
+      //   path: this.path,
+      // );
     }
   }
 

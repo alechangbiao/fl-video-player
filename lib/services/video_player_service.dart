@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
-import 'package:video_player/video_player.dart';
 import 'package:random_string/random_string.dart';
+// import 'package:flutter/widgets.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoPlayerService with ChangeNotifier {
   late VideoPlayerController _controller;
@@ -33,7 +33,7 @@ class VideoPlayerService with ChangeNotifier {
 
   VideoPlayerController get controller => _controller;
 
-  bool get initialized => _controller.value.initialized;
+  bool get initialized => _controller.value.isInitialized;
 
   bool get isPlaying => _controller.value.isPlaying;
 
@@ -76,7 +76,7 @@ class VideoPlayerService with ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isOverlayVisible => _isOverlayVisible ?? false;
+  bool get isOverlayVisible => _isOverlayVisible;
 
   /// Set player overlay visibility and re-render [isOverlayVisible]'s
   /// listener UI components accordingly

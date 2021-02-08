@@ -18,12 +18,12 @@ class AppBottomNavigationBar extends StatelessWidget {
           label: 'videos',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.folder),
-          label: 'folders',
+          icon: Icon(Icons.add_circle_outline),
+          label: 'add',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
-          label: 'settings',
+          label: 'setting',
         ),
       ],
     );

@@ -3,40 +3,45 @@ import 'package:provider/provider.dart';
 import 'package:app/services/file_service.dart';
 import 'package:app/screens/folder/components/build_app_bar.dart';
 
-class FolderScreenArguments {
-  final String? path;
+// class FolderScreenArguments {
+//   final String? path;
 
-  FolderScreenArguments({@required this.path});
-}
+//   FolderScreenArguments({@required this.path});
+// }
 
 class FolderScreen extends StatelessWidget {
-  // final String path;
+  final String path;
 
-  // FolderScreen({Key key, @required this.path}) : super(key: key) {
-  //   print('FolderScreen created');
-  // }
-  FolderScreen({Key? key}) : super(key: key) {
+  FolderScreen({Key? key, required this.path}) : super(key: key) {
     print('FolderScreen created');
   }
+  // FolderScreen({Key? key}) : super(key: key) {
+  //   print('FolderScreen created');
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final FolderScreenArguments? args =
-        ModalRoute.of(context)?.settings.arguments as FolderScreenArguments;
+    // final FolderScreenArguments? args =
+    //     ModalRoute.of(context)?.settings.arguments as FolderScreenArguments;
 
     FileService _fsProvider = Provider.of<FileService>(context);
-    _fsProvider.currentPath = args?.path;
+    // _fsProvider.currentPath = args?.path;
+    _fsProvider.currentPath = path;
 
     print(ModalRoute.of(context)!.settings.name);
 
-    return WillPopScope(
-      onWillPop: () async {
-        _fsProvider.goBack();
-        return true;
-      },
-      child: Scaffold(
-        appBar: buildAppBar(context),
-      ),
+    return Scaffold(
+      appBar: buildAppBar(context),
     );
+
+    // return WillPopScope(
+    //   onWillPop: () async {
+    //     _fsProvider.goBack();
+    //     return true;
+    //   },
+    //   child: Scaffold(
+    //     appBar: buildAppBar(context),
+    //   ),
+    // );
   }
 }

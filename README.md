@@ -105,10 +105,32 @@ Add the following keys to your Info.plist file, located in `<PROJECT_ROOT>/ios/R
 
 ## Issues & Solutions
 
-- Lorem issues
-- ...
-- ...
-- Ipsum Solutions
+### iOS Local Network Permissions for Debug
+
+For detailed information [click here](https://flutter.dev/docs/development/add-to-app/ios/project-setup#local-network-privacy-permissions)
+
+<br />
+
+### Unsound null safety
+
+Testing or running mixed-version programs
+
+```sh
+flutter run --no-sound-null-safety -v
+```
+
+Alternatively, set the language version in the entrypoint — the file that contains main() function — to 2.9. In Flutter apps, this file is often named lib/main.dart. In command-line apps, this file is often named bin/<packageName>.dart. You can also opt out files under test, because they are also entrypoints.
+
+```
+// @dart=2.9
+import 'src/my_app.dart';
+
+main() {
+  //...
+}
+```
+
+For more information [click here](https://dart.dev/null-safety/unsound-null-safety)
 
 <br /><br />
 
@@ -128,3 +150,13 @@ Add the following keys to your Info.plist file, located in `<PROJECT_ROOT>/ios/R
 - Integrate with 'File' app on iOS
 - Add file or directory to 'File' app on iOS
 - iPad layout optimization **(important)**
+
+## Steps to Migrate Project from Scratch
+
+1. Create project `flutter create <name>`
+2. Copy `README.md` & `.gitignore` file from old project
+3. Open `ios/Runner.xcworkspace` and edit _Bundle Identifier_ to `com.v2player.flutter.app`
+4. Copy dependencies & edit configs from `pubsepc.ymal`
+5. Copy & edit configs from `ios/Runner/Info.plist`
+6. Debug once to make permissions to take effect
+7. Copy `l10n.yaml` file, `assets` `lib` & `test` directory to project and run `flutter pub get`

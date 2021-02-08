@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'package:flutter/material.dart';
 import 'package:app/app.dart';
 import 'package:app/data/preferences.dart';

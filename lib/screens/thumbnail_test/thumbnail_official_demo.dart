@@ -36,6 +36,8 @@ class ThumbnailResult {
   const ThumbnailResult({this.image, this.dataSize, this.height, this.width});
 }
 
+//----------------------------------------------------------------------
+
 Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   //WidgetsFlutterBinding.ensureInitialized();
   Uint8List bytes;
@@ -80,6 +82,8 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   }));
   return completer.future;
 }
+
+//----------------------------------------------------------------------
 
 class GenThumbnailImage extends StatefulWidget {
   final ThumbnailRequest? thumbnailRequest;
@@ -140,6 +144,8 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
     );
   }
 }
+
+//----------------------------------------------------------------------
 
 class ThumbnailOfficialDemo extends StatefulWidget {
   @override
@@ -285,6 +291,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
         ),
       )
     ];
+    //----------------------------------------
 
     return Scaffold(
         appBar: AppBar(title: const Text('Thumbnail Plugin example')),

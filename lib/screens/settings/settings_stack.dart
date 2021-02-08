@@ -11,7 +11,7 @@ class SettingsStack extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Building Settings Stack...');
     return Navigator(
-      key: NavigationService.kSettingsStack,
+      key: NavigationService.kSettingStack,
       onGenerateRoute: (settings) => MaterialPageRoute(
         settings: settings,
         builder: (context) {

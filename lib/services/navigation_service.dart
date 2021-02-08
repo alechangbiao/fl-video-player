@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class NavigationService with ChangeNotifier {
   static final kVideosStack = GlobalKey<NavigatorState>();
-  static final kFoldersStack = GlobalKey<NavigatorState>();
-  static final kSettingsStack = GlobalKey<NavigatorState>();
+  static final kAddStack = GlobalKey<NavigatorState>();
+  static final kSettingStack = GlobalKey<NavigatorState>();
 
   static final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     kVideosStack,
-    kFoldersStack,
-    kSettingsStack,
+    kAddStack,
+    kSettingStack,
   ];
 
   static int _currentTabIndex = 0;
@@ -37,6 +37,7 @@ class NavigationService with ChangeNotifier {
     _stacksPaths[_currentTabIndex] = path;
   }
 
+  /// Navigate to a named route
   static Future<dynamic> navigateTo(String routeName, {Object? arguments, String? path}) {
     path != null ? currentStackPath = path : currentStackPath = '';
     return currentStackState!.pushNamed(
