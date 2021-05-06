@@ -1,4 +1,4 @@
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService with ChangeNotifier {
@@ -52,7 +52,8 @@ class NavigationService with ChangeNotifier {
 
   int get currentTabIndex => _currentTabIndex;
 
-  /// When change between tabs, change current path as well
+  /// Switch tab and change current path as when tab index are not the same,
+  ///otherwise empty the current stack
   set tabIndex(int newIndex) {
     final int prevIndex = _currentTabIndex;
     _currentTabIndex != newIndex

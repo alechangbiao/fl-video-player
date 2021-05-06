@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:app/utils/folder_icon.dart';
 import 'package:app/utils/constants.dart';
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 
 class SelectIconScreen extends StatelessWidget {
   @override
@@ -34,28 +33,29 @@ class SelectIconScreen extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     FolderIcon folderIcon = FolderIcons.allIcons[index];
                     return InkWell(
-                        onTap: () async {
-                          print(folderIcon.name);
+                      onTap: () async {
+                        print(folderIcon.name);
 
-                          await _fsProvider.updateCurrentPathFolderInfoFile(
-                            iconName: folderIcon.name,
-                          );
-                          // print(await info.readAsString());
-                          await _fsProvider.reloadRootPathFoldersList();
+                        await _fsProvider.updateCurrentPathFolderInfoFile(
+                          iconName: folderIcon.name,
+                        );
+                        // print(await info.readAsString());
+                        await _fsProvider.reloadRootPathFoldersList();
 
-                          Navigator.of(context).pop();
-                        },
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            color: AppColors.lightBlueGrey.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            folderIcon.icon,
-                            // color: AppColors.yellowDark,
-                            size: 34,
-                          ),
-                        ));
+                        Navigator.of(context).pop();
+                      },
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          color: AppColors.lightBlueGrey.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          folderIcon.icon,
+                          // color: AppColors.yellowDark,
+                          size: 34,
+                        ),
+                      ),
+                    );
                   },
                 ),
               ),

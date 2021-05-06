@@ -121,9 +121,12 @@ flutter run --no-sound-null-safety -v
 
 Alternatively, set the language version in the entrypoint — the file that contains main() function — to 2.9. In Flutter apps, this file is often named lib/main.dart. In command-line apps, this file is often named bin/<packageName>.dart. You can also opt out files under test, because they are also entrypoints.
 
-```
+`lib/main.dart:`
+
+```dart
 // @dart=2.9
 import 'src/my_app.dart';
+import ...
 
 main() {
   //...

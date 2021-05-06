@@ -1,4 +1,4 @@
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app/models/folder_info.dart';
@@ -52,7 +52,7 @@ class _FolderListItemState extends State<FolderListItem> {
   }
 
   /// When name changes, `this.path` needs to be updated as well.
-  void _changeName({required String newName}) {
+  void _changeName({required String newName}) async {
     setState(() => this.name = newName);
     //TODO: update current path
   }
@@ -60,16 +60,18 @@ class _FolderListItemState extends State<FolderListItem> {
   /// When path changes, `this.name` needs to be updated as well.
   void _changePath(String newPath) {}
 
-  void _onTap() {
+  void _onTap() async {
     if (widget.onTap != null) {
       widget.onTap!();
     } else {
-      NavigationService.currentStackState?.push(
+      String? _currentPath = FileService.getCurrentPathStatic;
+      await NavigationService.currentStackState?.push(
         MaterialPageRoute(
           builder: (context) => FolderScreen(path: this.path!),
-          // builder: (context) => Scaffold(),
         ),
       );
+      FileService.currentPathStatic = _currentPath; // set _currentPath back
+
       // NavigationService.navigateTo(
       //   '/folder',
       //   arguments: FolderScreenArguments(path: this.path),
@@ -78,12 +80,47 @@ class _FolderListItemState extends State<FolderListItem> {
     }
   }
 
+  void _onLongPress() {
+    showModalBottomSheet(
+      barrierColor: Colors.black.withOpacity(0.6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          // color: Colors.amber,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                child: const Text('Change Name'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Move Folder'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: InkWell(
         onTap: _onTap,
+        onLongPress: _onLongPress,
         child: Column(
           children: <Widget>[
             Stack(

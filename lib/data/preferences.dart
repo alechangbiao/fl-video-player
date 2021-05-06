@@ -6,8 +6,9 @@ import 'package:app/utils/shared_pref_utils.dart';
 class AppPreferences with ChangeNotifier {
   static final AppPreferences _singleton = AppPreferences._internal();
 
+  /// singleton constructor
   AppPreferences._internal() {
-    print('AppPreferences: singleton instantiated.');
+    // print('AppPreferences: singleton instantiated.');
   }
 
   factory AppPreferences() => _singleton;

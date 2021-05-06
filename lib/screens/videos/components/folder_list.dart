@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 import 'package:app/screens/videos/components/folder_list_item.dart';
 
 class FolderList extends StatelessWidget {
@@ -12,7 +12,7 @@ class FolderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building FolderList Component...');
+    // print('Building FolderList Component...');
     FileService _fsProvider = Provider.of<FileService>(context);
 
     Widget addFolder() {
@@ -26,18 +26,18 @@ class FolderList extends StatelessWidget {
       );
     }
 
-    Widget buildInitialView(BuildContext context) {
-      return SizedBox(
-        height: 80,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            FolderListItem(name: 'Private', icon: Icons.lock),
-            addFolder(),
-          ],
-        ),
-      );
-    }
+    // Widget buildInitialView(BuildContext context) {
+    //   return SizedBox(
+    //     height: 80,
+    //     child: ListView(
+    //       scrollDirection: Axis.horizontal,
+    //       children: <Widget>[
+    //         FolderListItem(name: 'Private', icon: Icons.lock),
+    //         addFolder(),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     Widget buildView(BuildContext context) {
       return SizedBox(
@@ -60,11 +60,13 @@ class FolderList extends StatelessWidget {
       );
     }
 
-    if (_fsProvider.rootPathFolders.isEmpty) {
-      _fsProvider.updateRootPathFoldersList();
-      return buildInitialView(context);
-    } else {
-      return buildView(context);
-    }
+    return buildView(context);
+
+    // if (_fsProvider.rootPathFolders.isEmpty) {
+    //   _fsProvider.updateRootPathFoldersList();
+    //   return buildInitialView(context);
+    // } else {
+    //   return buildView(context);
+    // }
   }
 }

@@ -22,7 +22,8 @@ class V2Snackbar {
       action: SnackBarAction(
         // textColor: _theme.primaryTextTheme.bodyText1.color,
         label: 'UNDO',
-        onPressed: () => Scaffold.of(context).hideCurrentSnackBar(),
+        // onPressed: () => Scaffold.of(context).hideCurrentSnackBar(),
+        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
       ),
     );
 

@@ -1,59 +1,9 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:app/services/file_service.dart';
 import 'package:flutter/material.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-
-class Thumbnail extends StatefulWidget {
-  @override
-  _Thumbnail createState() => _Thumbnail();
-}
-
-class _Thumbnail extends State<Thumbnail> {
-  GenerateThumbnailImage? _futreImage;
-
-  int _quality = 50;
-  int _sizeH = 0;
-  int _sizeW = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      final String videoFilePath = "${FileService.getRootPathSync}/Basic Theming.mp4";
-      print("Basic Theming.mp4 path: $videoFilePath");
-      _futreImage = GenerateThumbnailImage(
-        thumbnailRequest: ThumbnailRequest(
-            video: videoFilePath,
-            thumbnailPath: null,
-            imageFormat: ImageFormat.JPEG,
-            maxHeight: _sizeH,
-            maxWidth: _sizeW,
-            timeMs: 200000,
-            quality: _quality),
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.horizontal,
-      children: [
-        Expanded(
-          child: Container(
-            child: (_futreImage != null) ? _futreImage! : SizedBox(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
+import 'package:app/services/file_service/file_service.dart';
 
 class GenerateThumbnailImage extends StatefulWidget {
   final ThumbnailRequest? thumbnailRequest;
@@ -79,18 +29,19 @@ class _GenerateThumbnailImageState extends State<GenerateThumbnailImage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Center(
-                child: Text(
-                    "Image ${widget.thumbnailRequest?.thumbnailPath == null ? 'data size' : 'file size'}: $_dataSize, width:$_width, height:$_height"),
-              ),
-              Container(
-                color: Colors.grey,
-                height: 1.0,
-              ),
+              // Center(
+              //   child: Text(
+              //       "Image ${widget.thumbnailRequest?.thumbnailPath == null ? 'data size' : 'file size'}: $_dataSize, width:$_width, height:$_height"),
+              // ),
+              // Container(
+              //   color: Colors.grey,
+              //   height: 1.0,
+              // ),
               _image,
             ],
           );
         } else if (snapshot.hasError) {
+          print('snapshot hasError');
           return Container(
             padding: EdgeInsets.all(8.0),
             color: Colors.red,
@@ -99,11 +50,12 @@ class _GenerateThumbnailImageState extends State<GenerateThumbnailImage> {
             ),
           );
         } else {
+          // print('Generating the thumbnail for: ${widget.thumbnailRequest?.video}...');
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text("Generating the thumbnail for: ${widget.thumbnailRequest?.video}..."),
+              // Text("Generating the thumbnail for: ${widget.thumbnailRequest?.video}..."),
               SizedBox(
                 height: 10.0,
               ),
@@ -120,35 +72,35 @@ class _GenerateThumbnailImageState extends State<GenerateThumbnailImage> {
 
 Future<ThumbnailResult> _genThumbnail(ThumbnailRequest req) async {
   //WidgetsFlutterBinding.ensureInitialized();
-  Uint8List bytes;
+  Uint8List? bytes;
   final Completer<ThumbnailResult> completer = Completer();
   if (req.thumbnailPath != null) {
     final thumbnailPath = await VideoThumbnail.thumbnailFile(
-      video: req.video,
+      video: req.video!,
       thumbnailPath: req.thumbnailPath,
-      imageFormat: req.imageFormat,
-      maxHeight: req.maxHeight,
-      maxWidth: req.maxWidth,
-      timeMs: req.timeMs,
-      quality: req.quality,
+      imageFormat: req.imageFormat!,
+      maxHeight: req.maxHeight!,
+      maxWidth: req.maxWidth!,
+      timeMs: req.timeMs!,
+      quality: req.quality!,
     );
 
     print("thumbnail file is located: $thumbnailPath");
 
-    final file = thumbnailPath.getFile;
+    final file = thumbnailPath!.getFile;
     bytes = file.readAsBytesSync();
   } else {
     bytes = await VideoThumbnail.thumbnailData(
-      video: req.video,
-      imageFormat: req.imageFormat,
-      maxHeight: req.maxHeight,
-      maxWidth: req.maxWidth,
-      timeMs: req.timeMs,
-      quality: req.quality,
+      video: req.video!,
+      imageFormat: req.imageFormat!,
+      maxHeight: req.maxHeight!,
+      maxWidth: req.maxWidth!,
+      timeMs: req.timeMs!,
+      quality: req.quality!,
     );
   }
 
-  int _imageDataSize = bytes.length;
+  int _imageDataSize = bytes!.length;
   print("image size: $_imageDataSize");
 
   final _image = Image.memory(bytes);

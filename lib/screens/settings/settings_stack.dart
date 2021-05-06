@@ -9,7 +9,7 @@ import 'package:app/data/preferences.dart';
 class SettingsStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('Building Settings Stack...');
+    // print('Building Settings Stack...');
     return Navigator(
       key: NavigationService.kSettingStack,
       onGenerateRoute: (settings) => MaterialPageRoute(

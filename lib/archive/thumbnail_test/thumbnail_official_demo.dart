@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 
 class ThumbnailRequest {
   final String? video;
@@ -40,33 +40,33 @@ class ThumbnailResult {
 
 Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   //WidgetsFlutterBinding.ensureInitialized();
-  Uint8List bytes;
+  Uint8List? bytes;
   final Completer<ThumbnailResult> completer = Completer();
   if (r.thumbnailPath != null) {
     final thumbnailPath = await VideoThumbnail.thumbnailFile(
-        video: r.video,
+        video: r.video!,
         thumbnailPath: r.thumbnailPath,
-        imageFormat: r.imageFormat,
-        maxHeight: r.maxHeight,
-        maxWidth: r.maxWidth,
-        timeMs: r.timeMs,
-        quality: r.quality);
+        imageFormat: r.imageFormat!,
+        maxHeight: r.maxHeight!,
+        maxWidth: r.maxWidth!,
+        timeMs: r.timeMs!,
+        quality: r.quality!);
 
     print("thumbnail file is located: $thumbnailPath");
 
-    final file = thumbnailPath.getFile;
+    final file = thumbnailPath!.getFile;
     bytes = file.readAsBytesSync();
   } else {
     bytes = await VideoThumbnail.thumbnailData(
-        video: r.video,
-        imageFormat: r.imageFormat,
-        maxHeight: r.maxHeight,
-        maxWidth: r.maxWidth,
-        timeMs: r.timeMs,
-        quality: r.quality);
+        video: r.video!,
+        imageFormat: r.imageFormat!,
+        maxHeight: r.maxHeight!,
+        maxWidth: r.maxWidth!,
+        timeMs: r.timeMs!,
+        quality: r.quality!);
   }
 
-  int _imageDataSize = bytes.length;
+  int _imageDataSize = bytes!.length;
   print("image size: $_imageDataSize");
 
   final _image = Image.memory(bytes);
@@ -169,7 +169,7 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
   @override
   void initState() {
     super.initState();
-    getTemporaryDirectory().then((d) => _tempDir = d.path);
+    getTemporaryDirectory().then((d) => _tempDir = d?.path);
   }
 
   @override
@@ -385,7 +385,8 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
               onPressed: () async {
                 setState(() {
                   // final String videoFile1Path = "${FileService.getRootPathSync}/intro.mp4";
-                  final String videoFile2Path = "${FileService.getRootPathSync}/Basic Theming.mp4";
+                  final String videoFile2Path =
+                      "${FileService.getRootPathStatic}/Basic Theming.mp4";
                   print("Basic Theming.mp4 path: $videoFile2Path");
                   _futreImage = GenThumbnailImage(
                       thumbnailRequest: ThumbnailRequest(
@@ -406,12 +407,13 @@ class _ThumbnailOfficialDemoState extends State<ThumbnailOfficialDemo> {
               onPressed: () async {
                 setState(() {
                   // final String videoFile1Path = "${FileService.getRootPathSync}/intro.mp4";
-                  final String videoFile2Path = "${FileService.getRootPathSync}/Basic Theming.mp4";
+                  final String videoFile2Path =
+                      "${FileService.getRootPathStatic}/Basic Theming.mp4";
                   print("Basic Theming.mp4 path: $videoFile2Path");
                   _futreImage = GenThumbnailImage(
                       thumbnailRequest: ThumbnailRequest(
                           video: videoFile2Path,
-                          thumbnailPath: FileService.getRootPathSync,
+                          thumbnailPath: FileService.getRootPathStatic,
                           imageFormat: _format,
                           maxHeight: _sizeH,
                           maxWidth: _sizeW,

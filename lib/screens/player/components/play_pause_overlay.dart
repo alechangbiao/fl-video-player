@@ -26,7 +26,7 @@ class PlayPauseOverlay extends StatelessWidget {
                   Container(
                     color: Colors.black26,
                     child: Center(
-                      child: _videoPlayerService.isPlaying
+                      child: _videoPlayerService.isPlaying!
                           ? GestureDetector(
                               child: Icon(Icons.pause, color: Colors.white, size: 100.0),
                               onTap: () {
@@ -47,18 +47,18 @@ class PlayPauseOverlay extends StatelessWidget {
                     left: 10,
                     child: Row(
                       children: [
-                        StreamBuilder<Duration>(
+                        StreamBuilder<Duration?>(
                           stream: _videoPlayerService.positionStream,
                           builder: (context, snapshot) {
                             return snapshot.hasData
                                 ? Text(snapshot.data!.extractTimeString)
-                                : Text(_videoPlayerService.position.extractTimeString);
+                                : Text(_videoPlayerService.position!.extractTimeString);
                           },
                         ),
                         SizedBox(width: 5),
                         Text('/'),
                         SizedBox(width: 5),
-                        Text(_videoPlayerService.duration.extractTimeString),
+                        Text(_videoPlayerService.duration!.extractTimeString),
                       ],
                     ),
                   ),

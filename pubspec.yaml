@@ -29,13 +29,15 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0-nullsafety.2
-  shared_preferences: ^0.5.12+4
-  path_provider: ^1.6.27 # finding commonly used locations on the filesystem.
+  shared_preferences: ^2.0.0-nullsafety
+  path_provider: ^2.0.0-nullsafety # finding commonly used locations on the filesystem.
   video_player: ^2.0.0-nullsafety.7 # video player controller
-  video_thumbnail: ^0.2.5+1 # generates thumbnail from video file or URL
-  image_picker: ^0.6.7+21 # enable picking images from the image library, and taking new pictures with the camera.
+  video_thumbnail: ^0.3.3 # generates thumbnail from video file or URL
+  image_picker: ^0.7.4 # enable picking images from the image library, and taking new pictures with the camera.
   flutter_slidable: ^0.6.0-nullsafety.0 # enable list item to slide
   random_string: ^2.2.0-nullsafety # generating random ascii strings.
+  mime: ^1.0.0 # working with MIME type definitions and for processing streams of MIME multipart media types.
+  flutter_video_info: ^1.2.0 # get basic meta information of a video file.
   # flushbar: # can use this to generate push notification alike UI
 
 dev_dependencies:
@@ -60,7 +62,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    - assets/intro.mp4
+    # - assets/intro.mp4
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

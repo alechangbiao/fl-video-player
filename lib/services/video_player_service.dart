@@ -1,11 +1,21 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
+import 'package:app/services/file_service/file_service.dart';
 
 class VideoPlayerService with ChangeNotifier {
-  late VideoPlayerController _controller;
+  VideoPlayerService() {
+    if (_controller != null) {
+      final oldController = _controller;
+      oldController?.dispose();
+      _controller = null;
+    }
+    print('video player service initialized !!!!!');
+  }
+
+  VideoPlayerController? _controller;
 
   bool _isOverlayVisible = true;
 
@@ -31,48 +41,83 @@ class VideoPlayerService with ChangeNotifier {
       ..initialize().then((_) => notifyListeners());
   }
 
-  VideoPlayerController get controller => _controller;
+  Future<bool> initController(/*{required String videoPath}*/) async {
+    // File videoFile = videoPath.getFile;
 
-  bool get initialized => _controller.value.isInitialized;
+    File videoFile = "${FileService.getRootPathStatic}/Basic Theming.mp4".getFile;
+    this._controller = VideoPlayerController.file(videoFile)
+      ..addListener(() {})
+      ..initialize().then((_) => notifyListeners());
 
-  bool get isPlaying => _controller.value.isPlaying;
+    // if (_controller == null) {
+    //   File videoFile = "${FileService.getRootPathSync}/Basic Theming.mp4".getFile;
+    //   this._controller = VideoPlayerController.file(videoFile)
+    //     ..addListener(() {})
+    //     ..initialize().then((_) => notifyListeners());
+    // } else {
+    //   // If there was a controller, we need to dispose of the old one first
+    //   // final _controlleroldController = _controller!;
+    //   await _controller?.dispose();
+
+    //   File videoFile = "${FileService.getRootPathSync}/Basic Theming.mp4".getFile;
+    //   this._controller = VideoPlayerController.file(videoFile)
+    //     ..addListener(() {})
+    //     ..initialize().then((_) => notifyListeners());
+    // }
+
+    return true;
+  }
+
+  disposeController() async {
+    if (_controller == null) return;
+    final oldController = _controller;
+    oldController?.dispose();
+    _controller = null;
+    notifyListeners();
+  }
+
+  VideoPlayerController? get controller => _controller;
+
+  bool? get initialized => _controller?.value.isInitialized;
+
+  bool? get isPlaying => _controller?.value.isPlaying;
 
   /// The total duration of the video.
   ///
   /// Is null when [_controller.value.initialized] is false.
-  Duration get duration => _controller.value.duration;
+  Duration? get duration => _controller?.value.duration;
 
   /// The current playback position.
-  Duration get position => _controller.value.position;
+  Duration? get position => _controller?.value.position;
 
   /// Stream of the current playback position.
   ///
   /// Updates every second.
-  Stream<Duration> get positionStream {
-    return Stream<Duration>.periodic(
+  Stream<Duration?> get positionStream {
+    return Stream<Duration?>.periodic(
       const Duration(seconds: 1),
-      (count) => _controller.value.position,
+      (count) => _controller?.value.position,
     );
   }
 
   /// The current volume of the playback.
-  double get volume => _controller.value.volume;
+  double? get volume => _controller?.value.volume;
 
   /// The current speed of the playback.
-  double get playbackSpeed => _controller.value.playbackSpeed;
+  double? get playbackSpeed => _controller?.value.playbackSpeed;
 
   // set playbackSpeed(double speed) => _controller.setPlay
 
   /// Pauses the video.
   Future<void> pause() async {
-    await _controller.pause();
+    await _controller?.pause();
     notifyListeners();
   }
 
   /// This method returns a future that completes as soon as the "play" command
   /// has been sent to the platform, not when playback itself is totally finished.
   Future<void> play() async {
-    await _controller.play();
+    await _controller?.play();
     notifyListeners();
   }
 

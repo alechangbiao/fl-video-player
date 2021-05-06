@@ -1,9 +1,7 @@
-// @dart=2.9
-
 import 'package:flutter/material.dart';
 import 'package:app/app.dart';
 import 'package:app/data/preferences.dart';
-import 'package:app/services/file_service.dart';
+import 'package:app/services/file_service/file_service.dart';
 
 void main() async {
   // To ensure app preference to work, call ensureInitialized()
