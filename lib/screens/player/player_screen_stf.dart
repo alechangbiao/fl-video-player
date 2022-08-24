@@ -1,14 +1,25 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-
-import 'components/play_pause_overlay_stf.dart';
+import 'package:app/services/file_service/file_service.dart';
+import 'package:app/utils/constants.dart';
+import 'package:app/screens/player/components/play_pause_overlay_stf.dart';
 
 class PlayerScreen extends StatefulWidget {
   final File videoFile;
+  final bool isRootPath;
+  final String videoId;
+  final int? initialTimeMs;
 
-  const PlayerScreen({Key? key, required this.videoFile}) : super(key: key);
+  const PlayerScreen({
+    Key? key,
+    required this.videoFile,
+    required this.videoId,
+    this.isRootPath = false,
+    this.initialTimeMs,
+  }) : super(key: key);
 
   @override
   _PlayerScreenState createState() => _PlayerScreenState();
@@ -16,26 +27,46 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   late VideoPlayerController _controller;
+  // late Duration _position;
+  // Duration? _duration;
+  // bool _isPlaying = false;
+  // bool _isEnd = false;
 
   @override
   void initState() {
     super.initState();
-    // File videoFile = "${FileService.getRootPathSync}/Basic Theming.mp4".getFile;
     this._controller = VideoPlayerController.file(widget.videoFile)
-      ..addListener(() {})
+      ..addListener(_addListnerCallBack)
       ..initialize().then((_) {
-        setState(() {});
+        setState(() {
+          if (widget.initialTimeMs != null) {
+            _controller.seekTo(Duration(milliseconds: widget.initialTimeMs!)).then((_) {
+              // _controller.play();
+            });
+          }
+        });
       });
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   Future<bool> _handlePop() async {
     if (_controller.value.isPlaying) await _controller.pause();
+    int timeMs = _controller.value.position.inMilliseconds;
+    int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+
+    await FileService().updateVideosInfoFileInPath(
+      widget.videoFile.parent.path,
+      id: widget.videoId,
+      updates: {
+        VideoInfoKey.timeMs: timeMs,
+        VideoInfoKey.lastWatchedAt: nowTimeStamp,
+      },
+    );
     return true;
   }
 
@@ -71,7 +102,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               allowScrubbing: true,
                               padding: orientation == Orientation.portrait
                                   ? EdgeInsets.zero
-                                  : EdgeInsets.fromLTRB(10, 0, 10, 30),
+                                  : const EdgeInsets.fromLTRB(10, 0, 10, 30),
                             ),
                             PlayPauseOverlay(
                               controller: _controller,
@@ -86,5 +117,36 @@ class _PlayerScreenState extends State<PlayerScreen> {
         ),
       ),
     );
+  }
+
+  void _addListnerCallBack() {
+    // final bool isPlaying = _controller.value.isPlaying;
+    // if (isPlaying != _isPlaying) {
+    //   setState(() {
+    //     _isPlaying = isPlaying;
+    //   });
+    // }
+    // _position = _controller.value.position;
+    // _duration = _controller.value.duration;
+
+    // Timer.run(() {
+    // _position = _controller.value.position;
+    // if (_controller.value.isPlaying == false) {
+    //   setState(() {
+    //     _controller.seekTo(_controller.value.position);
+    //   });
+    // }
+    // this.setState(() {
+    //   _position = _controller.value.position;
+    // });
+    // });
+
+    // _duration?.compareTo(_position) == 0 || _duration?.compareTo(_position) == -1
+    //     ? this.setState(() {
+    //         _isEnd = true;
+    //       })
+    //     : this.setState(() {
+    //         _isEnd = false;
+    //       });
   }
 }

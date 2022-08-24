@@ -1,8 +1,8 @@
-import 'package:app/screens/player/components/play_pause_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/services/video_player_service.dart';
 import 'package:video_player/video_player.dart';
+import 'package:app/services/video_player_service.dart';
+import 'package:app/archive/play_pause_overlay.dart';
 
 class PlayerScreen extends StatelessWidget {
   // final String videoPath;

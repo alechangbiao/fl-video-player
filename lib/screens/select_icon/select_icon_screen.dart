@@ -37,7 +37,7 @@ class SelectIconScreen extends StatelessWidget {
                         print(folderIcon.name);
 
                         await _fsProvider.updateCurrentPathFolderInfoFile(
-                          iconName: folderIcon.name,
+                          updates: {"iconName": folderIcon.name},
                         );
                         // print(await info.readAsString());
                         await _fsProvider.reloadRootPathFoldersList();

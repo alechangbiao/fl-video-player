@@ -7,8 +7,13 @@ import 'package:app/services/file_service/file_service.dart';
 
 class GenerateThumbnailImage extends StatefulWidget {
   final ThumbnailRequest? thumbnailRequest;
+  final bool isSquare;
 
-  const GenerateThumbnailImage({Key? key, this.thumbnailRequest}) : super(key: key);
+  const GenerateThumbnailImage({
+    Key? key,
+    this.thumbnailRequest,
+    this.isSquare = false,
+  }) : super(key: key);
 
   @override
   _GenerateThumbnailImageState createState() => _GenerateThumbnailImageState();
@@ -18,26 +23,27 @@ class _GenerateThumbnailImageState extends State<GenerateThumbnailImage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ThumbnailResult>(
-      future: _genThumbnail(widget.thumbnailRequest!),
+      future: _genThumbnail(widget.thumbnailRequest!, isSquare: widget.isSquare),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          final _image = snapshot.data.image;
-          final _width = snapshot.data.width;
-          final _height = snapshot.data.height;
-          final _dataSize = snapshot.data.dataSize;
+          final Image _image = snapshot.data.image;
+          final int _width = snapshot.data.width;
+          final int _height = snapshot.data.height;
+          final int _dataSize = snapshot.data.dataSize;
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Center(
-              //   child: Text(
-              //       "Image ${widget.thumbnailRequest?.thumbnailPath == null ? 'data size' : 'file size'}: $_dataSize, width:$_width, height:$_height"),
-              // ),
-              // Container(
-              //   color: Colors.grey,
-              //   height: 1.0,
-              // ),
-              _image,
+              widget.isSquare
+                  ? Center(
+                      child: AspectRatio(
+                        aspectRatio: 1 / 1,
+                        child: Container(
+                          child: _image,
+                        ),
+                      ),
+                    )
+                  : _image,
             ],
           );
         } else if (snapshot.hasError) {
@@ -70,8 +76,9 @@ class _GenerateThumbnailImageState extends State<GenerateThumbnailImage> {
 
 //----------------------------------------------------------------------
 
-Future<ThumbnailResult> _genThumbnail(ThumbnailRequest req) async {
+Future<ThumbnailResult> _genThumbnail(ThumbnailRequest req, {bool? isSquare}) async {
   //WidgetsFlutterBinding.ensureInitialized();
+
   Uint8List? bytes;
   final Completer<ThumbnailResult> completer = Completer();
   if (req.thumbnailPath != null) {
@@ -101,9 +108,9 @@ Future<ThumbnailResult> _genThumbnail(ThumbnailRequest req) async {
   }
 
   int _imageDataSize = bytes!.length;
-  print("image size: $_imageDataSize");
+  // print("image size: $_imageDataSize");
 
-  final _image = Image.memory(bytes);
+  Image _image = isSquare! ? Image.memory(bytes, fit: BoxFit.fitHeight) : Image.memory(bytes);
   _image.image
       .resolve(ImageConfiguration())
       .addListener(ImageStreamListener((ImageInfo info, bool _) {

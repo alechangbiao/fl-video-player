@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:app/screens/player/player_screen.dart';
+import 'package:app/archive/player_screen.dart';
 
 class SlidableListItem extends StatelessWidget {
   const SlidableListItem({

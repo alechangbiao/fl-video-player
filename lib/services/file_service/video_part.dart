@@ -23,17 +23,32 @@ extension VideoFilesExtension on FileService {
   /// List out the `List<File> videoFileList` in the root path
   ///
   /// Returns an empty list `<File>[]` if found none
-  Future<List<File>> getRootPathVideosList() async {
-    rootPathVideoFiles = await _listVideos(rootPath);
+  Future<List<File>> getRootPathVideosList({bool notify = false}) async {
+    // print("getRootPathVideosList called");
+    List<File> videos = await _listVideos(rootPath);
+    notify ? rootPathVideoFiles = videos : _rootPathVideoFiles = videos;
     return rootPathVideoFiles!;
   }
 
   /// List out the `List<File> videoFileList` in the current path
   ///
   /// returns an empty list `<File>[]` if found none
-  Future<List<File>> getCurrentPathVideosList() async {
-    currentPathVideoFiles = await _listVideos(currentPath);
+  Future<List<File>> getCurrentPathVideosList({bool notify = false}) async {
+    List<File> videos = await _listVideos(rootPath);
+    notify ? currentPathVideoFiles = videos : _currentPathVideoFiles = videos;
     return currentPathVideoFiles!;
+  }
+
+  Future<List<File>> updateVideosListAsync({required bool isRootPath, bool notify = true}) async {
+    return isRootPath
+        ? await getRootPathVideosList(notify: notify)
+        : await getCurrentPathVideosList(notify: notify);
+  }
+
+  Future<List<File>> selectVideosListAsync({required bool isRootPath}) async {
+    return isRootPath
+        ? await getRootPathVideosList(notify: false)
+        : await getCurrentPathVideosList(notify: false);
   }
 
   /// List out the `List<File> videoFileList` in the given directory
@@ -74,111 +89,141 @@ extension VideosInfoExtension on FileService {
 
   Future<bool> isVideosInfoFileExists({String? path, bool testing = false}) async {
     bool exist = await this._isFileExists(
-      fileBaseName: '.videos_info',
+      fileBaseName: VideoInfo.fileName,
       path: path,
       testing: testing,
     );
-    print('.videos_info file exists: $exist');
+    print('${VideoInfo.fileName} file exists: $exist');
     return exist;
+  }
+
+  Future<List<VideoInfo>> getRootPathVideosInfo({
+    bool testing = false,
+    bool notify = false,
+  }) async {
+    // print("getRootPathVideosInfo called");
+    List<VideoInfo> info = await this.getVideosInfo(path: rootPath, testing: testing);
+    // notify ? rootPathVideosInfo = info : _rootPathVideosInfo = info;
+    rootPathVideosInfo = info;
+    return info;
+  }
+
+  Future<List<VideoInfo>> updateRootPathVideosInfo({bool testing = false}) async {
+    return await this.getRootPathVideosInfo(testing: testing, notify: true);
+  }
+
+  Future<List<VideoInfo>> getCurrentPathVideosInfo({
+    bool testing = false,
+    bool notify = false,
+  }) async {
+    List<VideoInfo> info = await this.getVideosInfo(path: currentPath, testing: testing);
+    notify ? currentPathVideosInfo = info : _currentPathVideosInfo = info;
+    return info;
+  }
+
+  Future<List<VideoInfo>> updateCurrentPathVideosInfo({bool testing = false}) async {
+    return await this.getCurrentPathVideosInfo(testing: testing, notify: true);
+  }
+
+  Future<List<VideoInfo>> selectVideosInfoAsync({
+    required bool isRootPath,
+    bool notify = false,
+  }) async {
+    return isRootPath
+        ? await getRootPathVideosInfo(notify: notify)
+        : await getCurrentPathVideosInfo(notify: notify);
   }
 
   Future<List<VideoInfo>> getVideosInfo({@required String? path, bool testing = false}) async {
     path = testing ? '$rootPath/test' : path ?? currentPath ?? rootPath;
-    bool fileExists = await _isFileExists(fileBaseName: '.videos_info', path: path);
-
-    if (!fileExists) {
-      print('.videos_info not found in $path \n creating a new file...');
-      await createVideosInfoFile(path: path, testing: testing);
-    } else {
-      print('Found .videos_info in <${path?.baseName}>');
+    if (this.isRootPath(path)) {
+      if (_rootPathVideosInfo.length > 0) return _rootPathVideosInfo;
+    }
+    if (this.isCurrentPath(path)) {
+      if (_currentPathVideosInfo.length > 0) return _currentPathVideosInfo;
     }
 
-    String jsonContent = await File('$path/.videos_info').readAsString();
-    print('JSON String content: $jsonContent');
-    List<VideoInfo> infos = VideoInfo.fromJsonString(jsonContent);
-    for (VideoInfo info in infos) {
-      print('''
-            name:${info.name}, 
-            id:${info.id}, 
-            createdAt:${info.createdAt}, 
-            timeMs:${info.timeMs}, 
-            durationMs:${info.durationMs},
-            lastWatchedAt:${info.lastWatchedAt}
-            ''');
+    bool fileExists = await _isFileExists(fileBaseName: VideoInfo.fileName, path: path);
+    List<VideoInfo> infos;
+    if (!fileExists) {
+      print('.videos_info not found in $path \n creating a new file...');
+      File videosInfoFile = await this.createVideosInfoFile(path: path, testing: testing);
+      String jsonContent = await videosInfoFile.readAsString();
+      infos = VideoInfo.fromJsonString(jsonContent);
+    } else {
+      print('Found .videos_info in <${path?.baseName}>');
+      String jsonContent = await File('$path/.videos_info').readAsString();
+      infos = VideoInfo.fromJsonString(jsonContent);
+      List<String> videoNamesInInfoList = infos.map((VideoInfo info) => info.name).toList();
+      List<File> videoFiles = await _listVideos(path);
+
+      // check if .video_info contains each video's info
+      await Future.forEach(videoFiles, (File videoFile) async {
+        if (!videoNamesInInfoList.contains(videoFile.baseName)) {
+          VideoInfo newInfo = await VideoInfo.create(video: videoFile);
+          infos.add(newInfo);
+        }
+      });
+      await File('$path/.videos_info').writeAsString(VideoInfo.toJsonString(infos));
     }
     return infos;
   }
 
   Future<File> createVideosInfoFile({@required String? path, bool testing = false}) async {
+    bool isRootPath = this.isRootPath(path);
     path = testing ? '$rootPath/test' : path ?? currentPath ?? rootPath;
-    List<File> videoFiles;
-    List<VideoInfo> videoInfoList = <VideoInfo>[];
-
-    // videoFiles = await _listVideos(path);
-    if (testing) {
-      videoFiles = await _listVideos(path);
-    } else if (path == rootPath) {
-      videoFiles = rootPathVideoFiles ?? await getRootPathVideosList();
-    } else {
-      videoFiles = currentPathVideoFiles ?? await getCurrentPathVideosList();
-    }
-
+    List<File> videoFiles = testing
+        ? await _listVideos(path)
+        : await this.selectVideosListAsync(isRootPath: isRootPath);
     print(videoFiles.length);
-
-    if (videoFiles.isNotEmpty) {
-      await Future.forEach(videoFiles, (FileSystemEntity videoFile) async {
-        String videoFilePath = videoFile.path;
-        int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
-        int? durationMs = (await FlutterVideoInfo().getVideoInfo(videoFilePath))?.duration?.round();
-        VideoInfo info = VideoInfo(
-          id: randomAlpha(6),
-          name: videoFilePath.baseName,
-          durationMs: durationMs,
-          createdAt: nowTimeStamp,
-          lastModifiedAt: nowTimeStamp,
-        );
-        videoInfoList.add(info);
-      });
-    }
+    List<VideoInfo> videoInfoList = await VideoInfo.createList(videos: videoFiles);
     return await File('$path/.videos_info').writeAsString(VideoInfo.toJsonString(videoInfoList));
   }
 
-  Future<File?> updateCurrentPathVideoInfoFile({
+  Future<File?> updateCurrentPathVideosInfoFile({
     required String id,
-    String? name,
-    int? timeMs,
-    int? durationMs,
-    int? lastWatchedAt,
+    required Map<String, dynamic> updates,
     bool testing = false,
   }) async {
     print("FileService.updateCurrentPathVideoInfoFile get called");
     File? videoInfoFile = await this._updateVideosInfoFile(
       path: currentPath,
       id: id,
-      name: name,
-      timeMs: timeMs,
-      durationMs: durationMs,
-      lastWatchedAt: lastWatchedAt,
+      updates: updates,
       testing: testing,
     );
+    await this.updateCurrentPathVideosInfo(); // update _rootPathVideosInfo & notify
     return videoInfoFile;
   }
 
-  Future<File?> updateRootPathVideoInfoFile({
+  Future<File?> updateRootPathVideosInfoFile({
     required String id,
-    String? name,
-    int? timeMs,
-    int? durationMs,
-    int? lastWatchedAt,
+    required Map<String, dynamic> updates,
+    bool testing = false,
   }) async {
     print("FileService.updateRootPathVideoInfoFile get called");
     File? videoInfoFile = await this._updateVideosInfoFile(
       path: rootPath,
       id: id,
-      name: name,
-      timeMs: timeMs,
-      durationMs: durationMs,
-      lastWatchedAt: lastWatchedAt,
+      updates: updates,
+      testing: testing,
+    );
+    await this.updateRootPathVideosInfo(); // update _rootPathVideosInfo & notify
+    return videoInfoFile;
+  }
+
+  Future<File?> updateVideosInfoFileInPath(
+    String path, {
+    required String id,
+    required Map<String, dynamic> updates,
+    bool testing = false,
+  }) async {
+    print("FileService.updateVideosInfoFileInPath get called");
+    File? videoInfoFile = await this._updateVideosInfoFile(
+      path: path,
+      id: id,
+      updates: updates,
+      testing: testing,
     );
     return videoInfoFile;
   }
@@ -186,29 +231,98 @@ extension VideosInfoExtension on FileService {
   Future<File?> _updateVideosInfoFile({
     @required String? path,
     required String id,
-    String? name,
-    int? timeMs,
-    int? durationMs,
-    int? lastWatchedAt,
+    required Map<String, dynamic> updates,
     bool testing = false,
   }) async {
     path = testing ? '$rootPath/test' : path ?? currentPath ?? rootPath;
-    if (name == null && timeMs == null && durationMs == null && lastWatchedAt == null) return null;
+    if (updates.length == 0) return null;
     List<VideoInfo> videoInfoList = await this.getVideosInfo(path: path);
     List<VideoInfo> newList = videoInfoList.map((VideoInfo info) {
-      if (id == info.id) {
-        VideoInfo newInfo = info;
-        if (name != null) newInfo.name = name;
-        if (timeMs != null) newInfo.timeMs = timeMs;
-        if (durationMs != null) newInfo.durationMs = durationMs;
-        if (lastWatchedAt != null) newInfo.lastWatchedAt = lastWatchedAt;
-        int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
-        newInfo.lastModifiedAt = nowTimeStamp;
-        return newInfo;
-      } else {
-        return info;
-      }
+      if (id == info.id) info.update(updates: updates);
+      return info;
     }).toList();
-    return await File('$path/.videos_info').writeAsString(VideoInfo.toJsonString(newList));
+    return await File('$path/${VideoInfo.fileName}').writeAsString(VideoInfo.toJsonString(newList));
+  }
+
+  Future<File?> deleteInfoByIdFromVideosInfoFile({
+    required String path,
+    required String videoId,
+  }) async {
+    List<VideoInfo> videoInfoList = await this.getVideosInfo(path: path);
+    List<VideoInfo> newList = VideoInfo.deleteById(infos: videoInfoList, videoId: videoId);
+    return await File('$path/${VideoInfo.fileName}').writeAsString(VideoInfo.toJsonString(newList));
+  }
+
+  Future<File?> addInfoIntoVideosInfoFile({
+    required String path,
+    required VideoInfo info,
+    bool updateLastModifiedTimestamp = true,
+  }) async {
+    List<VideoInfo> infos = await this.getVideosInfo(path: path);
+    if (updateLastModifiedTimestamp) info.lastModifiedAt = DateTime.now().millisecondsSinceEpoch;
+    infos.add(info);
+    return await File('$path/${VideoInfo.fileName}').writeAsString(VideoInfo.toJsonString(infos));
+  }
+
+  Future<VideoInfo?> getVideoInfoFromVideosInfoFile({required String videoPath}) async {
+    List<VideoInfo> videoInfoList = await this.getVideosInfo(path: videoPath.parentPath);
+    return videoInfoList.firstWhere((VideoInfo e) => e.name == videoPath.baseName);
+  }
+
+  /// Moving a file to a new path
+  ///
+  /// Using rename as it is probably faster.
+  /// If rename fails, copy the source file and then delete it
+  Future<void> moveVideo({required String videoPath, required String targetPath}) async {
+    assert(videoPath.isVideo, "chosen file has to be a video file");
+    String folderPath = videoPath.parentPath;
+    VideoInfo? videoInfo = await getVideoInfoFromVideosInfoFile(videoPath: videoPath);
+    File video = File(videoPath);
+    try {
+      await video.rename('$targetPath/${video.baseName}');
+    } on FileSystemException catch (e) {
+      print(e);
+      await video.copy('$targetPath/${video.baseName}');
+      await video.delete();
+    }
+    if (videoInfo != null) {
+      await Future.wait([
+        this.deleteInfoByIdFromVideosInfoFile(path: video.parent.path, videoId: videoInfo.id),
+        this.addInfoIntoVideosInfoFile(path: targetPath, info: videoInfo),
+      ]);
+    }
+    await this.updateVideosListAsync(isRootPath: isRootPath(folderPath));
+  }
+
+  //TODO: complete the belowing API
+  Future<void> moveVideoToTrash({required String videoPath}) async {
+    try {
+      await this.moveVideo(videoPath: videoPath, targetPath: trashFolderPath);
+    } catch (e) {
+      print(e);
+    }
+    // update .trash_info
+    // update trash folder .info
+  }
+
+  Future<void> renameVideo({required String videoPath, required String newName}) async {
+    assert(videoPath.isVideo, "chosen file has to be a video file");
+    //TODO: check new name regular expression
+    String folderPath = videoPath.parentPath;
+    List<VideoInfo> infos = await this.selectVideosInfoAsync(isRootPath: isRootPath(folderPath));
+    String videoId = infos.firstWhere((VideoInfo e) => e.name == videoPath.baseName).id;
+    File videoFile = File(videoPath);
+    try {
+      await videoFile.rename('$folderPath/$newName.${videoPath.suffix}');
+      await this.updateVideosInfoFileInPath(
+        folderPath,
+        id: videoId,
+        updates: {VideoInfoKey.name: '$newName.${videoPath.suffix}'},
+      );
+      await this.updateVideosListAsync(isRootPath: isRootPath(folderPath), notify: false);
+      await this.updateFolderInfoFileInPath(folderPath, notify: true);
+    } catch (e) {
+      print(e);
+    }
   }
 }

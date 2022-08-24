@@ -12,61 +12,72 @@ class FolderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print('Building FolderList Component...');
     FileService _fsProvider = Provider.of<FileService>(context);
 
-    Widget addFolder() {
-      return FolderListItem(
-        name: 'Add Folder',
-        icon: Icons.add,
-        onTap: () async {
-          await _fsProvider.createDirectory(name: null);
-          _fsProvider.updateRootPathFoldersList();
-        },
-      );
-    }
-
-    // Widget buildInitialView(BuildContext context) {
-    //   return SizedBox(
-    //     height: 80,
-    //     child: ListView(
-    //       scrollDirection: Axis.horizontal,
-    //       children: <Widget>[
-    //         FolderListItem(name: 'Private', icon: Icons.lock),
-    //         addFolder(),
-    //       ],
-    //     ),
-    //   );
-    // }
-
-    Widget buildView(BuildContext context) {
-      return SizedBox(
-        height: 80,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            FolderListItem(
-              name: 'Private',
-              icon: Icons.lock,
-            ),
-            for (Directory dir in _fsProvider.rootPathFolders)
-              FolderListItem(
-                name: dir.baseName,
-                path: dir.path,
+    Widget buildAddFolderButton() {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: InkWell(
+          onTap: () async {
+            await _fsProvider.createFolder(name: null);
+            _fsProvider.updateRootPathFoldersList();
+          },
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Icon(Icons.add, size: 42),
+                ),
               ),
-            addFolder(),
-          ],
+              SizedBox(
+                width: 60,
+                child: Text(
+                  "Add Folder",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 10),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    return buildView(context);
+    // Hide .Private & .Trash folders
+    List<Directory> _folders = _fsProvider.rootPathFolders
+        .where((Directory d) => d.baseName != ".Private" && d.baseName != ".Trash")
+        .toList();
 
-    // if (_fsProvider.rootPathFolders.isEmpty) {
-    //   _fsProvider.updateRootPathFoldersList();
-    //   return buildInitialView(context);
-    // } else {
-    //   return buildView(context);
-    // }
+    // TODO: Render .Private & .Trash folders repectively
+    return SizedBox(
+      height: 80,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          FolderListItem(
+            name: 'Private',
+            path: _fsProvider.defaultPrivateFolderPath,
+            icon: Icons.lock,
+          ),
+          for (Directory folder in _folders)
+            FolderListItem(
+              name: folder.baseName,
+              path: folder.path,
+            ),
+          FolderListItem(
+            name: 'Trash',
+            path: _fsProvider.trashFolderPath,
+            itemType: FolderListItemType.TrashFolder,
+          ),
+          buildAddFolderButton(),
+        ],
+      ),
+    );
   }
 }

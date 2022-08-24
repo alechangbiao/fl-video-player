@@ -124,7 +124,7 @@ Alternatively, set the language version in the entrypoint — the file that cont
 `lib/main.dart:`
 
 ```dart
-// @dart=2.9
+// @dart=2.9  <--- add this line to specify the dart version for compiling the project
 import 'src/my_app.dart';
 import ...
 

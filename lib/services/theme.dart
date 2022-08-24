@@ -31,7 +31,10 @@ class AppTheme with ChangeNotifier {
       accentColor: AppColors.iconYellowDark,
       toggleableActiveColor: AppColors.iconBlueLight,
       buttonColor: AppColors.iconBlueLight,
-      textTheme: TextTheme(),
+      textTheme: TextTheme(
+          // bodyText2: TextStyle(color: Colors.white),
+
+          ),
       appBarTheme: AppBarTheme(
         color: Color(0xFF303030),
         actionsIconTheme: IconThemeData(color: Colors.white),

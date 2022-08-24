@@ -26,6 +26,7 @@ class FolderScreen extends StatelessWidget {
     //     ModalRoute.of(context)?.settings.arguments as FolderScreenArguments;
     // _fsProvider.currentPath = args?.path;
     // print(ModalRoute.of(context)!.settings.name);
+    _fsProvider.listCurrentPathFiles();
 
     return Scaffold(
       appBar: buildAppBar(context),

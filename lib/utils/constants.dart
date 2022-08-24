@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+export 'package:app/models/sorting_mode.dart' show LayoutSorterKey, SequenceSorterKey;
+export 'package:app/models/folder_info.dart' show FolderInfoKey;
+export 'package:app/models/video_info.dart' show VideoInfoKey;
+export 'package:app/models/trash_info.dart' show TrashInfoKey;
+
+export 'package:app/utils/folder_icon.dart' show IconNames;
+
 class AppColors {
   static const iconBlueLight = Color(0xFF366796);
   static const iconBlueDark = Color(0xFF273B7A);
@@ -12,16 +19,6 @@ class AppColors {
 class AppLayout {
   static const double screenEdgeMargin = 20;
   static const double appBarActionMargin = 10;
-}
-
-class SortingModeKey {
-  static const String asList = "As List";
-  static const String asIcons = "As Icons";
-  static const String asCovers = "As Covers";
-
-  static const String name = "Name";
-  static const String dateAdded = "Date Added";
-  static const String lastWatched = "Last Watched";
 }
 
 const List<String> SupportedVideoTypes = <String>['mp4', 'avi', 'mov', 'm4v', '3gp'];

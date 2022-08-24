@@ -2,18 +2,18 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:random_string/random_string.dart';
 import 'package:mime/mime.dart';
 
+import 'package:app/models/trash_info.dart';
 import 'package:app/models/video_info.dart';
 import 'package:app/models/folder_info.dart';
 import 'package:app/utils/constants.dart';
 
 part 'package:app/services/file_service/utils.dart';
 part 'package:app/services/file_service/video_part.dart';
-part 'package:app/services/file_service/file_part.dart';
+part 'package:app/services/file_service/folder_part.dart';
+part 'package:app/services/file_service/trash_folder_part.dart';
 
 /// A service class to manage files in app directory
 ///
@@ -73,6 +73,11 @@ class FileService with ChangeNotifier {
     return directory?.path;
   }
 
+  bool isRootPath(String? path) => path == null ? false : path == _rootPath;
+  bool isCurrentPath(String? path) => path == null ? false : path == _currentPath;
+
+  void notify() => notifyListeners();
+
   //***************** Class Methods *****************//
 
   /// Navigate current path by `<int>level`
@@ -112,40 +117,6 @@ class FileService with ChangeNotifier {
     return _listFiles(_currentPath, testing: testing);
   }
 
-  /// Create a directory, default name to `'untitled' + incremental suffix`
-  /// (eg. untitled 2) if name is not provided
-  Future<Directory> createDirectory({required String? name, String? path}) async {
-    _rootPath ?? await setPaths();
-    path = path ?? _currentPath ?? _rootPath;
-
-    List<String> dirBaseNames =
-        (await this.updateRootPathFoldersList()).map((directory) => directory.baseName).toList();
-    // regular express for a string that is 'untitled' or 'untitled\s\d+'
-    final RegExp untitledRegExp = RegExp(r'^untitled(\s\d+$)?');
-    List<String> untitledDirBaseNames =
-        dirBaseNames.where((name) => untitledRegExp.hasMatch("$name")).toList();
-
-    if (name == null) {
-      if (untitledDirBaseNames.isEmpty) {
-        name = "untitled";
-      } else if (untitledDirBaseNames.length == 1 && untitledDirBaseNames[0] == 'untitled') {
-        name = "untitled 2";
-      } else {
-        int maxUntitledDirNumSuffix = untitledDirBaseNames
-            .where((String name) => name != 'untitled')
-            .map((String name) => int.parse(name.replaceAll(new RegExp(r'[^0-9]'), '')))
-            .reduce(max);
-        String suffix = (maxUntitledDirNumSuffix + 1).toString();
-        name = "untitled $suffix";
-      }
-    }
-
-    String newDirPath = "$path/$name";
-    Directory newDir = await Directory(newDirPath).create();
-    await this.createFolderInfoFile(path: newDirPath);
-    return newDir;
-  }
-
   Future<bool> _isFileExists({
     @required String? fileBaseName,
     @required String? path,
@@ -156,22 +127,4 @@ class FileService with ChangeNotifier {
     // print('File $path/$fileBaseName exists: $exists.');
     return exists;
   }
-
-  /// Moving a file to a new path
-  ///
-  /// Using rename as it is probably faster.
-  /// If rename fails, copy the source file and then delete it
-  Future<dynamic> moveFile({required File file, required String to}) async {
-    try {
-      return await file.rename(to);
-    } on FileSystemException catch (e) {
-      print(e);
-      final newFile = await file.copy(to);
-      await file.delete();
-      return newFile;
-    }
-  }
-
-  // TODO: Complete the functionality of belowing API
-  Future<dynamic>? moveDirectory({required Directory directory, required String to}) {}
 }

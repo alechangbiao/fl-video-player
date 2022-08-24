@@ -1,3 +1,4 @@
+import 'package:app/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -104,7 +105,7 @@ class AddStack extends StatelessWidget {
       ),
       Divider(),
       ElevatedButton(
-        onPressed: () => FileService().createDirectory(name: null),
+        onPressed: () => FileService().createFolder(name: ".test_hidden"),
         child: Text('create directory'),
       ),
       ElevatedButton(
@@ -155,9 +156,10 @@ class AddStack extends StatelessWidget {
         child: Text('create .videos_info file'),
       ),
       ElevatedButton(
-        onPressed: () => FileService().updateCurrentPathVideoInfoFile(
+        onPressed: () => FileService().updateCurrentPathVideosInfoFile(
           id: "xybsrQ",
-          timeMs: 100,
+          updates: {VideoInfoKey.timeMs: 100},
+          // timeMs: 100,
           // testing: true,
         ),
         child: Text('update .videos_info file'),

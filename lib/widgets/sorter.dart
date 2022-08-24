@@ -1,53 +1,29 @@
-import 'package:app/models/folder_info.dart';
-import 'package:app/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:app/services/file_service/file_service.dart';
 import 'package:provider/provider.dart';
+import 'package:app/models/folder_info.dart';
+import 'package:app/services/file_service/file_service.dart';
+import 'package:app/models/sorting_mode.dart';
 
-class SortingMode {
-  final String name;
-  final IconData iconData;
-
-  SortingMode(this.name, this.iconData);
-}
-
-List<SortingMode> _layoutModes = [
-  SortingMode(SortingModeKey.asList, Icons.view_list_rounded),
-  SortingMode(SortingModeKey.asCovers, Icons.view_stream_rounded),
-  SortingMode(SortingModeKey.asCovers, Icons.view_column_rounded),
-  SortingMode(SortingModeKey.asIcons, Icons.view_module_rounded),
-];
-
-List<SortingMode> _sequenceModes = [
-  SortingMode(SortingModeKey.name, Icons.sort_by_alpha),
-  SortingMode(SortingModeKey.dateAdded, Icons.library_add),
-  SortingMode(SortingModeKey.lastWatched, Icons.watch_later),
-];
-
-enum SorterType { layout, sequence }
+export 'package:app/models/sorting_mode.dart' show SorterType;
 
 class Sorter extends StatefulWidget {
-  final SorterType sorterType;
+  /// Type of the sorter, for sorthing layout or sequence
+  final SorterType type;
   final bool isRootPath;
 
-  const Sorter({Key? key, required this.sorterType, this.isRootPath = false}) : super(key: key);
+  const Sorter({Key? key, required this.type, this.isRootPath = false}) : super(key: key);
 
   @override
-  _SorterState createState() {
-    if (this.sorterType == SorterType.sequence) return _SorterState(sortingModes: _sequenceModes);
-    if (this.sorterType == SorterType.layout) return _SorterState(sortingModes: _layoutModes);
-    return _SorterState(sortingModes: []);
-  }
+  _SorterState createState() => _SorterState(modes: SortingMode.getModeList(type: type));
 }
 
 class _SorterState extends State<Sorter> {
-  final List<SortingMode> sortingModes;
+  final List<SortingMode> modes;
 
-  _SorterState({required this.sortingModes});
+  _SorterState({required this.modes});
 
   late int _currentMode;
-
-  bool _hasSetinitialMode = false;
+  bool _hasSetInitialMode = false;
 
   Future<void> _selectRow(int row, {@required FileService? fsProvider}) async {
     if (row == _currentMode) return;
@@ -56,40 +32,24 @@ class _SorterState extends State<Sorter> {
       _currentMode = row;
     });
     // update .info file
-    String nameOfSortingMode = this.sortingModes[row].name;
-    if (widget.sorterType == SorterType.layout) {
-      widget.isRootPath
-          ? fsProvider!.updateRootPathFolderInfoFile(layout: nameOfSortingMode)
-          : fsProvider!.updateCurrentPathFolderInfoFile(layout: nameOfSortingMode);
-    }
-    if (widget.sorterType == SorterType.sequence) {
-      widget.isRootPath
-          ? fsProvider!.updateRootPathFolderInfoFile(sequence: nameOfSortingMode)
-          : fsProvider!.updateCurrentPathFolderInfoFile(sequence: nameOfSortingMode);
-    }
+    String mode = this.modes[row].name;
+    widget.isRootPath
+        ? fsProvider!.updateRootPathFolderInfoFile(updates: {widget.type.name: mode})
+        : fsProvider!.updateCurrentPathFolderInfoFile(updates: {widget.type.name: mode});
   }
 
-  void setInitialMode({required FileService fsProvider}) {
-    if (_hasSetinitialMode == true) return;
-    FolderInfo info =
-        widget.isRootPath ? fsProvider.rootPathFolerInfo! : fsProvider.currentPathFolerInfo!;
-    if (widget.sorterType == SorterType.layout) {
-      if (info.layout == null) {
-        _currentMode = 0;
-      } else {
-        SortingMode mode = sortingModes.firstWhere((mode) => mode.name == info.layout);
-        _currentMode = sortingModes.indexOf(mode);
-      }
+  void _setInitialMode({required FileService fsProvider}) {
+    if (_hasSetInitialMode == true) return;
+    FolderInfo info = fsProvider.selectFolderInfo(isRootPath: widget.isRootPath)!;
+    if (info.getValue(key: widget.type.name) == null) {
+      _currentMode = 0;
+    } else {
+      SortingMode mode = modes.firstWhere((mode) {
+        return mode.name == info.getValue(key: widget.type.name);
+      });
+      _currentMode = modes.indexOf(mode);
     }
-    if (widget.sorterType == SorterType.sequence) {
-      if (info.layout == null) {
-        _currentMode = 0;
-      } else {
-        SortingMode mode = sortingModes.firstWhere((mode) => mode.name == info.sequence);
-        _currentMode = sortingModes.indexOf(mode);
-      }
-    }
-    _hasSetinitialMode = true;
+    _hasSetInitialMode = true;
   }
 
   @override
@@ -99,21 +59,21 @@ class _SorterState extends State<Sorter> {
 
   @override
   Widget build(BuildContext context) {
-    print("Building Sorter, ${widget.sorterType}");
+    print("Building Sorter, ${widget.type}");
     FileService _fsProvider = Provider.of<FileService>(context);
-    setInitialMode(fsProvider: _fsProvider);
+    _setInitialMode(fsProvider: _fsProvider);
 
     return PopupMenuButton(
       offset: Offset(0, 30),
       onSelected: (int row) async => this._selectRow(row, fsProvider: _fsProvider),
       child: Row(
         children: [
-          Icon(this.sortingModes[_currentMode].iconData),
+          Icon(this.modes[_currentMode].iconData),
           Icon(Icons.keyboard_arrow_down),
         ],
       ),
       itemBuilder: (BuildContext context) {
-        return sortingModes
+        return modes
             .asMap()
             .entries
             .map(

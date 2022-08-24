@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:random_string/random_string.dart';
+import 'package:app/models/dot_info.dart';
 
 /// A collection of values, that contains information of a directory folder.
 ///
@@ -23,7 +24,7 @@ import 'package:random_string/random_string.dart';
 /// // Converts `<FolderInfo>data` to JSON string.
 /// FolderInfo.toJsonString(FolderInfo data);
 /// ```
-class FolderInfo {
+class FolderInfo implements DotInfo {
   /// Parses a JSON string and returns the resulting `FolderInfo` object.
   static FolderInfo fromJsonString(String jsonString) =>
       FolderInfo.fromJson(json.decode(jsonString));
@@ -34,6 +35,24 @@ class FolderInfo {
   /// contains the information, then decode the `<Map>instance` to a JSON string
   /// for the `.info` file to store.
   static String toJsonString(FolderInfo data) => json.encode(data.toJson());
+
+  static FolderInfo create({
+    required String? path,
+    bool isPrivate = false,
+    String? password,
+    String? iconName,
+  }) {
+    int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+    return FolderInfo(
+      id: randomAlpha(6),
+      name: path!.split('/').last,
+      password: password,
+      iconName: iconName,
+      isPrivate: isPrivate,
+      createdAt: nowTimeStamp,
+      lastModifiedAt: nowTimeStamp,
+    );
+  }
 
   static const String fileName = ".info";
 
@@ -72,30 +91,83 @@ class FolderInfo {
   /// Construct a `FolderInfo()` instance from a `JSON Map`
   factory FolderInfo.fromJson(Map<String, dynamic> json) {
     return FolderInfo(
-      id: json['id'] ?? randomAlpha(5),
-      isPrivate: json['isPrivate'],
-      name: json['name'],
-      password: json['password'],
-      iconName: json['iconName'],
-      createdAt: json['createdAt'],
-      lastModifiedAt: json['lastModifiedAt'],
-      sequence: json['sequence'],
-      layout: json['layout'],
+      id: json[FolderInfoKey.id] ?? randomAlpha(5),
+      isPrivate: json[FolderInfoKey.isPrivate],
+      name: json[FolderInfoKey.name],
+      password: json[FolderInfoKey.password],
+      iconName: json[FolderInfoKey.iconName],
+      createdAt: json[FolderInfoKey.createdAt],
+      lastModifiedAt: json[FolderInfoKey.lastModifiedAt],
+      sequence: json[FolderInfoKey.sequence],
+      layout: json[FolderInfoKey.layout],
     );
   }
 
   /// Create a `JSON Map` using the instance property
+  @override
   Map<String, dynamic> toJson() {
     return {
-      "id": this.id,
-      "name": this.name,
-      "isPrivate": this.isPrivate,
-      "password": this.password,
-      "iconName": this.iconName,
-      "createdAt": this.createdAt,
-      "lastModifiedAt": this.lastModifiedAt,
-      "sequence": this.sequence,
-      "layout": this.layout,
+      FolderInfoKey.id: this.id,
+      FolderInfoKey.name: this.name,
+      FolderInfoKey.isPrivate: this.isPrivate,
+      FolderInfoKey.password: this.password,
+      FolderInfoKey.iconName: this.iconName,
+      FolderInfoKey.createdAt: this.createdAt,
+      FolderInfoKey.lastModifiedAt: this.lastModifiedAt,
+      FolderInfoKey.sequence: this.sequence,
+      FolderInfoKey.layout: this.layout,
     };
   }
+
+  @override
+  void update({Map<String, dynamic>? updates}) {
+    if (updates != null) {
+      for (MapEntry<String, dynamic> e in updates.entries) {
+        if (e.key == FolderInfoKey.name && e.value is String) this.name = e.value;
+        if (e.key == FolderInfoKey.isPrivate && e.value is bool) this.isPrivate = e.value;
+        if (e.key == FolderInfoKey.password && e.value is String?) this.password = e.value;
+        if (e.key == FolderInfoKey.iconName && e.value is String?) this.iconName = e.value;
+        if (e.key == FolderInfoKey.sequence && e.value is String?) this.sequence = e.value;
+        if (e.key == FolderInfoKey.layout && e.value is String?) this.layout = e.value;
+      }
+    }
+    int nowTimeStamp = DateTime.now().millisecondsSinceEpoch;
+    this.lastModifiedAt = nowTimeStamp;
+  }
+
+  @override
+  dynamic getValue({required String key}) {
+    switch (key) {
+      case FolderInfoKey.id:
+        return this.id;
+      case FolderInfoKey.name:
+        return this.name;
+      case FolderInfoKey.isPrivate:
+        return this.isPrivate;
+      case FolderInfoKey.password:
+        return this.password;
+      case FolderInfoKey.iconName:
+        return this.iconName;
+      case FolderInfoKey.createdAt:
+        return this.createdAt;
+      case FolderInfoKey.lastModifiedAt:
+        return this.lastModifiedAt;
+      case FolderInfoKey.sequence:
+        return this.sequence;
+      case FolderInfoKey.layout:
+        return this.layout;
+    }
+  }
+}
+
+class FolderInfoKey {
+  static const String id = "id";
+  static const String name = "name";
+  static const String isPrivate = "isPrivate";
+  static const String password = "password";
+  static const String createdAt = "createdAt";
+  static const String iconName = "iconName";
+  static const String lastModifiedAt = "lastModifiedAt";
+  static const String sequence = "sequence";
+  static const String layout = "layout";
 }

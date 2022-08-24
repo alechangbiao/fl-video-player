@@ -18,9 +18,9 @@ class SortingSelector extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Sorter(sorterType: SorterType.sequence, isRootPath: true),
+              Sorter(type: SorterType.sequence, isRootPath: true),
               SizedBox(width: 20),
-              Sorter(sorterType: SorterType.layout, isRootPath: true),
+              Sorter(type: SorterType.layout, isRootPath: true),
             ],
           ),
         ),

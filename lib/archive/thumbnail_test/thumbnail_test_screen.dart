@@ -65,7 +65,7 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest req) async {
   }
 
   int _imageDataSize = bytes!.length;
-  print("image size: $_imageDataSize");
+  // print("image size: $_imageDataSize");
 
   final _image = Image.memory(bytes);
   _image.image
